@@ -18,7 +18,7 @@ CREDENTIALS_FILE = os.path.expanduser("~/.config/cursor/google-drive-credentials
 
 # スコープ
 SCOPES = [
-    'https://www.googleapis.com/auth/spreadsheets.readonly',
+    'https://www.googleapis.com/auth/spreadsheets',
     'https://www.googleapis.com/auth/drive.readonly'
 ]
 
@@ -205,9 +205,13 @@ def main():
         print("  python google_sheets.py read <spreadsheet_id> [range]")
         print("  python google_sheets.py write <spreadsheet_id> <range> <data_json>")
         print("  python google_sheets.py list [query]")
+        print("  python google_sheets.py create_sheet <spreadsheet_id> <sheet_title>")
+        print("  python google_sheets.py sheets <spreadsheet_id>")
         print("\n例:")
         print("  python google_sheets.py read 1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms")
         print("  python google_sheets.py list \"name contains 'CBD'\"")
+        print("  python google_sheets.py create_sheet <spreadsheet_id> \"新シート\"")
+        print("  python google_sheets.py sheets <spreadsheet_id>")
         sys.exit(1)
     
     command = sys.argv[1]
@@ -249,6 +253,36 @@ def main():
                 print(f"{file['name']} ({file['id']})")
         else:
             print("スプレッドシートが見つかりませんでした")
+    
+    elif command == 'create_sheet':
+        if len(sys.argv) < 4:
+            print("エラー: スプレッドシートIDとシート名が必要です")
+            sys.exit(1)
+        
+        spreadsheet_id = sys.argv[2]
+        sheet_title = sys.argv[3]
+        
+        result = create_sheet(spreadsheet_id, sheet_title)
+        if result:
+            print(f"✅ シートを作成しました: {result.get('title')} (ID: {result.get('sheetId')})")
+        else:
+            print("シートの作成に失敗しました")
+    
+    elif command == 'sheets':
+        if len(sys.argv) < 3:
+            print("エラー: スプレッドシートIDが必要です")
+            sys.exit(1)
+        
+        spreadsheet_id = sys.argv[2]
+        sheets = list_sheets(spreadsheet_id)
+        
+        if sheets:
+            print(f"📊 スプレッドシート内のシート一覧:")
+            for sheet in sheets:
+                props = sheet.get('properties', {})
+                print(f"  - {props.get('title')} (ID: {props.get('sheetId')})")
+        else:
+            print("シートが見つかりませんでした")
     
     else:
         print(f"不明なコマンド: {command}")

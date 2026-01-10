@@ -204,9 +204,11 @@ def main():
         print("使用方法:")
         print("  python ga4.py report [property_id] [days]")
         print("  python ga4.py summary [property_id] [days]")
+        print("  python ga4.py today [property_id]")
         print("\n例:")
         print(f"  python ga4.py report {DEFAULT_PROPERTY_ID} 7")
         print(f"  python ga4.py summary {DEFAULT_PROPERTY_ID} 30")
+        print(f"  python ga4.py today {DEFAULT_PROPERTY_ID}")
         sys.exit(1)
     
     command = sys.argv[1]
@@ -227,6 +229,17 @@ def main():
             print(f"ページビュー数: {stats['pageviews']:,}")
             print(f"アクティブユーザー数: {stats['active_users']:,}")
             print(f"1日あたりのPV（平均）: {stats['pageviews'] / stats['days']:.1f}")
+    
+    elif command == 'today':
+        stats = get_today_stats(property_id)
+        if stats:
+            print(f"\n📊 GA4 本日のアクセス数")
+            print(f"セッション数: {stats['sessions']:,}")
+            print(f"ページビュー数: {stats['pageviews']:,}")
+            print(f"アクティブユーザー数: {stats['active_users']:,}")
+            print(f"日付: {stats['date']}")
+        else:
+            print("本日のデータが見つかりませんでした。")
     
     else:
         print(f"不明なコマンド: {command}")
