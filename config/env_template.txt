@@ -15,3 +15,10 @@ LINE_USER_ID=your_user_id_here
 WORDPRESS_URL=https://cbd-no-hito.com
 WORDPRESS_USERNAME=your_username
 WORDPRESS_APP_PASSWORD=your_app_password
+
+# 定期実行時刻設定
+TWEET_GENERATION_TIME=07:00  # ツイート案生成時刻（HH:MM形式）
+TWEET_POSTING_TIME=07:15     # ツイート投稿時刻（HH:MM形式）
+
+# 承認待ちリスト用スプレッドシートID
+APPROVAL_SPREADSHEET_ID=your_spreadsheet_id_here

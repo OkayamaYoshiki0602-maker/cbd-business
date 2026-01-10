@@ -13,7 +13,8 @@ from dotenv import load_dotenv
 # 親ディレクトリをパスに追加
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from social_media.article_detector import check_wordpress_rss, generate_tweet_text, add_to_approval_queue
+from social_media.article_detector import check_wordpress_rss, add_to_approval_queue
+from social_media.tweet_generator_v2 import generate_buzz_tweet, generate_news_tweet
 from social_media.line_notify import send_line_message
 from google_services.google_sheets import read_spreadsheet
 
@@ -61,7 +62,7 @@ def summarize_article_trends():
 
 def generate_daily_tweet():
     """
-    毎日のツイート文案を自動生成
+    毎日のツイート文案を自動生成（バズる要素を考慮した改善版）
     
     Returns:
         ツイート文案
@@ -74,18 +75,21 @@ def generate_daily_tweet():
             # 新着記事がない場合、一般的なツイート文案を生成
             tweet_text = "CBDに関する最新情報をお届けします 🌿 #CBD"
         else:
-            # 最新記事からツイート文案を生成
+            # 最新記事からツイート文案を生成（改善版）
             latest_article = new_articles[0]
-            tweet_text = generate_tweet_text(
+            tweet_text = generate_buzz_tweet(
                 latest_article['title'],
                 latest_article.get('summary'),
-                latest_article['url']
+                latest_article.get('url'),
+                latest_article.get('summary')  # 元のテキストとして使用
             )
         
         return tweet_text
     
     except Exception as e:
         print(f"⚠️ ツイート文案生成に失敗: {e}")
+        import traceback
+        traceback.print_exc()
         return "CBDに関する最新情報をお届けします 🌿 #CBD"
 
 
