@@ -33,7 +33,7 @@ APPROVAL_SPREADSHEET_ID = os.getenv('APPROVAL_SPREADSHEET_ID', '')
 
 def generate_tweet_text(article_title, article_summary=None, article_url=None):
     """
-    記事情報からツイート文案を生成
+    記事情報からツイート文案を生成（要約・見所を含む）
     
     Args:
         article_title: 記事タイトル
@@ -41,29 +41,80 @@ def generate_tweet_text(article_title, article_summary=None, article_url=None):
         article_url: 記事URL（オプション）
     
     Returns:
-        ツイート文案（280文字以内）
+        ツイート文案（280文字以内、リンク短縮対応）
     """
-    # 基本的なツイート文案を生成
-    base_text = article_title
+    # URL短縮モジュールをインポート
+    try:
+        from social_media.url_shortener import shorten_url
+        from social_media.article_summarizer import summarize_article_with_highlights
+    except ImportError:
+        # モジュールが見つからない場合は、フォールバック
+        shorten_url = lambda x: x
+        summarize_article_with_highlights = None
     
-    if article_url:
-        # URLを含める場合は、URLの長さ（23文字）を考慮
-        url_text = f"\n\n{article_url}"
-        max_title_length = 280 - len(url_text) - 10  # 余裕を持たせる
+    # 記事要約・見所を取得（article_urlがある場合）
+    if article_url and summarize_article_with_highlights:
+        # 記事本文を取得して要約
+        article_summary = summarize_article_with_highlights(
+            article_url,
+            article_title,
+            max_length=150  # ツイート本文用の要約
+        )
+    
+    # URLを短縮
+    short_url = shorten_url(article_url) if article_url else None
+    
+    # URLの長さを考慮（TwitterではURLは23文字としてカウント）
+    url_length = 23 if short_url else 0
+    hashtag = "#CBD"
+    hashtag_length = len(hashtag) + 1  # +1は改行
+    
+    # 利用可能な文字数
+    available_length = 280 - url_length - hashtag_length - 4  # 余裕を持たせる
+    
+    # ツイート本文を生成
+    if article_summary:
+        # 要約がある場合、タイトル + 要約の見所
+        tweet_body = f"{article_title}\n\n{article_summary}"
     else:
-        url_text = ""
-        max_title_length = 280
+        # 要約がない場合、タイトルのみ
+        tweet_body = article_title
     
-    # タイトルが長すぎる場合は短縮
-    if len(base_text) > max_title_length:
-        base_text = base_text[:max_title_length-3] + "..."
+    # 文字数制限
+    if len(tweet_body) > available_length:
+        # 要約がある場合、要約を優先してタイトルを短縮
+        if article_summary:
+            # 要約の長さを確保
+            summary_length = min(len(article_summary), available_length - 30)  # タイトル用に30文字確保
+            summary_text = article_summary[:summary_length]
+            if len(summary_text) < len(article_summary):
+                summary_text = summary_text.rstrip('。') + "..."
+            
+            # タイトルの長さを調整
+            title_length = available_length - len(summary_text) - 2  # -2は改行
+            title_text = article_title[:title_length-3] + "..." if len(article_title) > title_length else article_title
+            
+            tweet_body = f"{title_text}\n\n{summary_text}"
+        else:
+            # タイトルのみの場合
+            tweet_body = tweet_body[:available_length-3] + "..."
     
-    # ハッシュタグを追加（余裕があれば）
-    hashtags = "#CBD"
-    if len(base_text) + len(url_text) + len(hashtags) + 2 <= 280:
-        tweet_text = f"{base_text}{url_text}\n{hashtags}"
-    else:
-        tweet_text = f"{base_text}{url_text}"
+    # ツイート文案を組み立て
+    tweet_text = tweet_body
+    if short_url:
+        tweet_text += f"\n\n{short_url}"
+    tweet_text += f"\n{hashtag}"
+    
+    # 最終チェック（念のため）
+    if len(tweet_text) > 280:
+        # URLとハッシュタグを除いて調整
+        url_part = f"\n\n{short_url}" if short_url else ""
+        hashtag_part = f"\n{hashtag}"
+        main_text = tweet_text.replace(url_part, "").replace(hashtag_part, "").strip()
+        max_main_length = 280 - len(url_part) - len(hashtag_part) - 2
+        if len(main_text) > max_main_length:
+            main_text = main_text[:max_main_length-3] + "..."
+        tweet_text = f"{main_text}{url_part}{hashtag_part}"
     
     return tweet_text
 

@@ -41,19 +41,24 @@ CBD_KEYWORDS = [
 ]
 
 
-def collect_cbd_news(hours=24, max_articles=10):
+def collect_cbd_news(hours=24, days=30, max_articles=10):
     """
     CBD・大麻関連ニュースを収集
     
     Args:
-        hours: 過去何時間のニュースを取得するか
+        hours: 過去何時間のニュースを取得するか（daysが指定されている場合は無視）
+        days: 過去何日間のニュースを取得するか（デフォルト: 30日）
         max_articles: 最大記事数
     
     Returns:
         ニュース記事のリスト
     """
     all_articles = []
-    cutoff_time = datetime.now() - timedelta(hours=hours)
+    # daysが指定されている場合、hoursを無視してdaysを使用
+    if days:
+        cutoff_time = datetime.now() - timedelta(days=days)
+    else:
+        cutoff_time = datetime.now() - timedelta(hours=hours)
     
     for feed_url in CBD_RSS_FEEDS:
         try:
