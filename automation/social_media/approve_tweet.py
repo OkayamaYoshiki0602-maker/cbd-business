@@ -23,9 +23,12 @@ load_dotenv()
 APPROVAL_SPREADSHEET_ID = os.getenv('APPROVAL_SPREADSHEET_ID', '')
 
 
-def post_approved_tweets():
+def post_approved_tweets(auto_mode=False):
     """
     承認済みツイートを投稿
+    
+    Args:
+        auto_mode: 自動モード（定期実行時はTrue）
     """
     if not APPROVAL_SPREADSHEET_ID:
         print("⚠️ APPROVAL_SPREADSHEET_IDが設定されていません。")
@@ -36,6 +39,9 @@ def post_approved_tweets():
         approved = get_approved_tweets()
         
         if not approved:
+            if auto_mode:
+                # 自動モードの場合は何もしない（ログも出力しない）
+                return
             print("📋 投稿待ちの承認済みツイートはありません")
             return
         
@@ -91,6 +97,9 @@ def main():
                 print(f"\n行{item['row']}: {item['title']}")
                 print(f"  ツイート文案: {item['tweet_text']}")
                 print(f"  URL: {item['url']}")
+    elif len(sys.argv) >= 2 and sys.argv[1] == 'auto':
+        # 自動モード（定期実行時）
+        post_approved_tweets(auto_mode=True)
     else:
         # 承認済みツイートを投稿
         post_approved_tweets()

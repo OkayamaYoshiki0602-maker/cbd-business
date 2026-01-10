@@ -43,7 +43,7 @@ def list_pending_approvals():
         
         pending = []
         for i, row in enumerate(data, start=2):
-            if len(row) >= 6 and row[1] == '承認待ち':
+            if len(row) >= 6 and row[1] in ['下書き', '承認待ち']:  # 下書きと承認待ちの両方を表示
                 pending.append({
                     'row': i,
                     'timestamp': row[0] if len(row) > 0 else '',

@@ -147,7 +147,7 @@ def add_to_approval_queue(article_title, tweet_text, article_url=None, source='w
         # 新しい行を追加
         new_row = [
             datetime.now().isoformat(),
-            '承認待ち',
+            '下書き',  # ステータス: 下書き → 承認済み → 投稿済み
             article_title,
             tweet_text,
             article_url or '',
