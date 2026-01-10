@@ -25,7 +25,7 @@ def send_line_message(message, user_id=None):
     
     Args:
         message: 送信するメッセージ
-        user_id: 送信先のユーザーID（Noneの場合はプッシュ通知で送信）
+        user_id: 送信先のユーザーID（Noneの場合はBroadcast Messageで全員に送信）
     
     Returns:
         送信結果
@@ -36,22 +36,31 @@ def send_line_message(message, user_id=None):
         return False
     
     try:
-        url = 'https://api.line.me/v2/bot/message/push' if user_id else 'https://api.line.me/v2/bot/message/broadcast'
+        # user_idが指定されている場合のみPush Messageを使用
+        # それ以外はBroadcast Messageを使用
+        if user_id and user_id != 'your_user_id_here':
+            url = 'https://api.line.me/v2/bot/message/push'
+            payload = {
+                'to': user_id,
+                'messages': [{
+                    'type': 'text',
+                    'text': message
+                }]
+            }
+        else:
+            # Broadcast Message（全員に送信）
+            url = 'https://api.line.me/v2/bot/message/broadcast'
+            payload = {
+                'messages': [{
+                    'type': 'text',
+                    'text': message
+                }]
+            }
         
         headers = {
             'Content-Type': 'application/json',
             'Authorization': f'Bearer {LINE_CHANNEL_ACCESS_TOKEN}'
         }
-        
-        payload = {
-            'messages': [{
-                'type': 'text',
-                'text': message
-            }]
-        }
-        
-        if user_id:
-            payload['to'] = user_id
         
         response = requests.post(url, headers=headers, json=payload)
         
@@ -92,7 +101,9 @@ def send_tweet_preview(tweet_text, media_path=None):
     
     preview_message += "\nこのツイートを投稿しますか？"
     
-    return send_line_message(preview_message, user_id=LINE_USER_ID)
+    # LINE_USER_IDが設定されている場合のみ指定、それ以外はBroadcast Message
+    user_id = LINE_USER_ID if LINE_USER_ID and LINE_USER_ID != 'your_user_id_here' else None
+    return send_line_message(preview_message, user_id=user_id)
 
 
 def send_tweet_result(tweet_id, tweet_text, success=True):
@@ -123,7 +134,9 @@ URL: https://twitter.com/user/status/{tweet_id}
 エラーが発生しました。
 """
     
-    return send_line_message(message, user_id=LINE_USER_ID)
+    # LINE_USER_IDが設定されている場合のみ指定、それ以外はBroadcast Message
+    user_id = LINE_USER_ID if LINE_USER_ID and LINE_USER_ID != 'your_user_id_here' else None
+    return send_line_message(message, user_id=user_id)
 
 
 def main():
