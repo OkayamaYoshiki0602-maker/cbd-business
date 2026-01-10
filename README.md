@@ -2,6 +2,33 @@
 
 CursorとAIを活用し、CBDアフィリエイトサイトの収益化と、各SNS・ツールを連携させた自動収益化エコシステムの構築を目指すプロジェクト。
 
+## 📁 プロジェクト構造
+
+```
+cursor/
+├── .cursorrules              # Cursor最適化ルール
+├── .gitignore                # Git除外設定
+├── README.md                 # このファイル
+├── identity.md               # ユーザープロフィール・ビジョン
+├── DIRECTORY_STRUCTURE.md    # ディレクトリ構成ルール
+│
+├── docs/                     # ドキュメント類
+│   ├── PROJECT_PLAN.md       # 詳細プロジェクト計画
+│   ├── WORKFLOW.md           # ワークフロー・自動化手順
+│   ├── DIAGNOSIS_LOGIC_PROPOSAL.md  # 診断ロジック案
+│   ├── SETUP_GUIDE.md        # 開発環境セットアップガイド
+│   └── ...                   # その他ドキュメント
+│
+├── config/                   # 設定ファイル・テンプレート
+│   ├── mcp_settings_template.json  # MCP設定テンプレート
+│   └── credentials/          # 認証情報（.gitignoreで除外）
+│
+└── scripts/                  # 自動化スクリプト
+    └── setup_mcp.sh          # MCP設定自動化スクリプト
+```
+
+詳細は [`DIRECTORY_STRUCTURE.md`](DIRECTORY_STRUCTURE.md) を参照。
+
 ## プロジェクト概要
 
 ### 目標
@@ -46,20 +73,18 @@ CursorとAIを活用し、CBDアフィリエイトサイトの収益化と、各
 - [ ] Google Drive上のスプレッドシートとCursorのMCP連携最適化
 - [ ] X自動投稿システムのプロトタイプ作成
 
-## ファイル構成
+## クイックスタート
 
-```
-cursor/
-├── identity.md              # ユーザープロフィール・ビジョン
-├── .cursorrules            # Cursor最適化ルール
-├── README.md               # このファイル
-├── PROJECT_PLAN.md         # 詳細プロジェクト計画
-├── WORKFLOW.md             # ワークフロー・自動化手順
-└── [将来的に追加]
-    ├── diagnosis-tools/    # 診断ツール関連コード
-    ├── automation/         # 自動化スクリプト（Python/GAS）
-    └── content-generation/ # 記事自動生成関連
-```
+### セットアップ
+1. [`docs/SETUP_GUIDE.md`](docs/SETUP_GUIDE.md) を参照
+2. [`docs/QUICK_START.md`](docs/QUICK_START.md) を参照
+
+### MCP連携
+1. [`docs/MCP_SETUP_INSTRUCTIONS.md`](docs/MCP_SETUP_INSTRUCTIONS.md) を参照
+2. [`docs/SETUP_STEP_BY_STEP.md`](docs/SETUP_STEP_BY_STEP.md) を参照
+
+### GitHubリポジトリ作成
+1. [`docs/GITHUB_REPO_SETUP.md`](docs/GITHUB_REPO_SETUP.md) を参照
 
 ## 参考情報
 
@@ -67,3 +92,11 @@ cursor/
 - **X:** @yo_nandakanda (1,000 followers)
 - **TikTok:** 1,200 followers
 - **スキルセット:** SQL, GCP, Python, WordPress, データコンサル
+
+## 関連ドキュメント
+
+- [`identity.md`](identity.md) - ユーザープロフィール・ビジョン
+- [`DIRECTORY_STRUCTURE.md`](DIRECTORY_STRUCTURE.md) - ディレクトリ構成ルール
+- [`docs/PROJECT_PLAN.md`](docs/PROJECT_PLAN.md) - 詳細プロジェクト計画
+- [`docs/WORKFLOW.md`](docs/WORKFLOW.md) - ワークフロー・自動化手順
+- [`docs/NEXT_STEPS.md`](docs/NEXT_STEPS.md) - 次のステップガイド
