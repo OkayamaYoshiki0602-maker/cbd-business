@@ -1,0 +1,24 @@
+{
+  "mcpServers": {
+    "google-drive": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-google-drive"
+      ],
+      "env": {
+        "GOOGLE_DRIVE_CREDENTIALS": "~/.config/cursor/google-drive-credentials.json"
+      }
+    },
+    "github": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-github"
+      ],
+      "env": {
+        "GITHUB_TOKEN": "YOUR_GITHUB_PERSONAL_ACCESS_TOKEN_HERE"
+      }
+    }
+  }
+}
