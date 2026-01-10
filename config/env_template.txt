@@ -22,3 +22,9 @@ TWEET_POSTING_TIME=07:15     # ツイート投稿時刻（HH:MM形式）
 
 # 承認待ちリスト用スプレッドシートID
 APPROVAL_SPREADSHEET_ID=your_spreadsheet_id_here
+
+# AI要約設定
+AI_SUMMARIZER=openai  # openai, claude, gemini, local
+OPENAI_API_KEY=your_openai_api_key_here  # OpenAI GPT API（推奨）
+ANTHROPIC_API_KEY=your_anthropic_api_key_here  # Claude API
+GEMINI_API_KEY=your_gemini_api_key_here  # Gemini API
