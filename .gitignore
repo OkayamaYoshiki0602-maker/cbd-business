@@ -1,0 +1,79 @@
+# Cursor Customization Rules for CBD Side Business Project
+# Git除外設定
+
+# 個人情報・認証情報
+*.key
+*.pem
+*.json
+!package.json
+!package-lock.json
+credentials.json
+google-drive-credentials.json
+.env
+.env.local
+.env.*.local
+
+# Google Drive認証情報
+**/credentials/
+**/google-drive-credentials/
+
+# MCP設定（個人情報含む可能性）
+mcp_settings.json
+cline_mcp_settings.json
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+.venv
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.npm
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Cursor
+.cursor/
+.cursorignore
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# WordPress（将来的に）
+wp-config.php
+wp-content/uploads/
+wp-content/cache/
+
+# 一時ファイル
+*.tmp
+*.log
+*.cache
+.cache/
+
+# バックアップ
+*.bak
+*.backup
+*.old
+
+# テスト・デバッグ
+test/
+debug/
+*.test.js
+*.spec.js

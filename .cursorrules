@@ -1,0 +1,57 @@
+# Cursor Customization Rules for CBD Side Business Project
+
+## Core Identity Reference
+- **Always reference:** `@identity.md` for user background, values, and business context
+- **User Profile:** 27歳、データコンサルタント、趣味（ポーカー・マラソン・お酒）
+- **Core Values:** 人を笑わせる、意外性を提供する、仕事を楽しむ
+- **Work Style:** 平日<1hr、休日~3hrs、自動化・効率化を最優先
+
+## Project Context
+- **Primary Goal (2024):** 固定費（約10万円）の完全回収
+- **Target:** CBDサイト（https://cbd-no-hito.com/）のCVR 10%を目指す
+- **Tech Stack:** WordPress/SWELL, Python, SQL, GAS, GitHub
+
+## Critical Workflow Rules
+
+### 1. Approval-First Principle
+- **NEVER** create files, modify code, or deploy without explicit user approval
+- Always present proposals with:
+  - Clear rationale (数値的根拠または図解イメージ)
+  - Comparison of alternatives (if applicable)
+  - Expected impact/outcome
+- Wait for user's "進めてよい" confirmation before execution
+
+### 2. Data-Driven Approach
+- Provide numerical justifications or visual comparisons when proposing solutions
+- Reference conversion rates, time estimates, scalability metrics
+- Use graphs, tables, or diagrams to illustrate options
+
+### 3. Automation & Scalability Priority
+- Prioritize "仕組み化" over one-off solutions
+- Leverage GitHub, APIs, MCP integrations for repeatable workflows
+- Design for minimal manual intervention
+
+### 4. Integration & Tool Coordination
+Tools to consider for ecosystem:
+- **WordPress/SWELL:** Main revenue platform
+- **GitHub:** Code management (themes, scripts, automation)
+- **Google Drive (MCP):** Spreadsheet-based database for content/diagnosis logic
+- **X (Twitter):** Auto-posting with humor/意外性
+- **TikTok/Instagram:** Content automation (scripts, scheduling)
+- **LINE Official:** High-CVR personal recommendations
+
+### 5. Content & Code Style
+- Inject humor and unexpected elements (ポーカー、マラソン、お酒の要素)
+- Maintain professional quality while being entertaining
+- Write code that is self-documenting and maintainable
+- Follow WordPress/SWELL best practices
+
+## Code & File Organization
+- Use GitHub for all code (SWELL child themes, Python scripts, automation tools)
+- Keep files organized by purpose (diagnosis-tools/, automation/, content-generation/)
+- Document all automation workflows in WORKFLOW.md
+
+## Communication Style
+- **Language:** Always respond in Japanese
+- **Tone:** Professional but friendly, data-driven, focused on solutions
+- **Format:** Use visual aids (tables, code blocks, diagrams) when helpful
