@@ -35,8 +35,8 @@ def list_pending_approvals():
         return []
     
     try:
-        # 承認待ちリストを読み込む
-        data = read_spreadsheet(APPROVAL_SPREADSHEET_ID, '承認待ちリスト!A2:Z1000')
+        # 承認待ちリストを読み込む（シート名は「シート1」を使用）
+        data = read_spreadsheet(APPROVAL_SPREADSHEET_ID, 'シート1!A2:Z1000')
         
         if not data:
             return []
@@ -76,8 +76,8 @@ def approve_tweet(row_number):
         return False
     
     try:
-        # ステータスを「承認済み」に更新
-        range_name = f'承認待ちリスト!B{row_number}'
+        # ステータスを「承認済み」に更新（シート名は「シート1」を使用）
+        range_name = f'シート1!B{row_number}'
         result = write_spreadsheet(APPROVAL_SPREADSHEET_ID, range_name, [['承認済み']])
         
         if result:
@@ -104,8 +104,8 @@ def get_approved_tweets():
         return []
     
     try:
-        # 承認待ちリストを読み込む
-        data = read_spreadsheet(APPROVAL_SPREADSHEET_ID, '承認待ちリスト!A2:Z1000')
+        # 承認待ちリストを読み込む（シート名は「シート1」を使用）
+        data = read_spreadsheet(APPROVAL_SPREADSHEET_ID, 'シート1!A2:Z1000')
         
         if not data:
             return []

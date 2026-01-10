@@ -131,8 +131,8 @@ def add_to_approval_queue(article_title, tweet_text, article_url=None, source='w
         return False
     
     try:
-        # 承認待ちリストを読み込む
-        approval_data = read_spreadsheet(APPROVAL_SPREADSHEET_ID, '承認待ちリスト!A1:Z1000')
+        # 承認待ちリストを読み込む（シート名は「シート1」を使用）
+        approval_data = read_spreadsheet(APPROVAL_SPREADSHEET_ID, 'シート1!A1:Z1000')
         
         # ヘッダー行を確認
         if not approval_data:
@@ -163,8 +163,8 @@ def add_to_approval_queue(article_title, tweet_text, article_url=None, source='w
         
         approval_data.append(new_row)
         
-        # スプレッドシートに書き込み
-        range_name = f'承認待ちリスト!A{len(approval_data)}'
+        # スプレッドシートに書き込み（シート名は「シート1」を使用）
+        range_name = f'シート1!A{len(approval_data)}'
         result = write_spreadsheet(APPROVAL_SPREADSHEET_ID, range_name, [new_row])
         
         if result:

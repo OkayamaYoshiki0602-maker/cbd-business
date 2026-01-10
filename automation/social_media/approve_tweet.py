@@ -62,8 +62,8 @@ def post_approved_tweets(auto_mode=False):
                 # 投稿結果をLINEで通知
                 send_tweet_result(result['id'], tweet_text, success=True)
                 
-                # ステータスを「投稿済み」に更新
-                range_name = f'承認待ちリスト!B{row_number}'
+                # ステータスを「投稿済み」に更新（シート名は「シート1」を使用）
+                range_name = f'シート1!B{row_number}'
                 write_spreadsheet(APPROVAL_SPREADSHEET_ID, range_name, [['投稿済み']])
                 
                 print(f"✅ ツイート投稿完了: {result['id']}")
