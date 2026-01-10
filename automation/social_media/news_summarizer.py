@@ -21,7 +21,7 @@ ANTHROPIC_API_KEY = os.getenv('ANTHROPIC_API_KEY')
 GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
 
 # 使用するAI要約サービス（優先順位）
-AI_SUMMARIZER = os.getenv('AI_SUMMARIZER', 'openai')  # openai, claude, gemini, local
+AI_SUMMARIZER = os.getenv('AI_SUMMARIZER', 'gemini')  # openai, claude, gemini, local（デフォルト: gemini）
 
 
 def summarize_with_openai(text, max_length=200):
@@ -205,19 +205,19 @@ def summarize_news(text, max_length=200, use_ai=None):
     if use_ai is None:
         use_ai = AI_SUMMARIZER
     
-    # AI要約を試行（優先順位順）
-    if use_ai == 'openai' or use_ai == 'auto':
+    # AI要約を試行（優先順位順：gemini優先）
+    if use_ai == 'gemini' or use_ai == 'auto':
+        summary = summarize_with_gemini(text, max_length)
+        if summary:
+            return summary
+    
+    if use_ai == 'openai' or (use_ai == 'auto' and not summary):
         summary = summarize_with_openai(text, max_length)
         if summary:
             return summary
     
     if use_ai == 'claude' or (use_ai == 'auto' and not summary):
         summary = summarize_with_claude(text, max_length)
-        if summary:
-            return summary
-    
-    if use_ai == 'gemini' or (use_ai == 'auto' and not summary):
-        summary = summarize_with_gemini(text, max_length)
         if summary:
             return summary
     

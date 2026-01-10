@@ -3,6 +3,7 @@ google-auth-oauthlib>=1.1.0
 google-auth-httplib2>=0.1.1
 google-api-python-client>=2.100.0
 google-analytics-data>=0.18.0
+google-generativeai>=0.3.0  # Gemini API（AI要約用）
 
 # Social Media Automation
 tweepy>=4.14.0
@@ -10,3 +11,7 @@ feedparser>=6.0.10
 schedule>=1.2.0
 requests>=2.31.0
 python-dotenv>=1.0.0
+
+# AI要約（オプション）
+openai>=1.0.0  # OpenAI GPT API（オプション）
+anthropic>=0.18.0  # Claude API（オプション）
