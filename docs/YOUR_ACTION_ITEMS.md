@@ -5,6 +5,7 @@
 ✅ **スプレッドシートID:** `1-2L6C3NpF8vqnXxHWKP-Js3TMFKYE73tTtxdkZVPTaM`
 ✅ **Gemini APIキー:** 設定済み
 ✅ **.envファイル:** 更新済み
+✅ **ヘッダー行:** 自動設定済み
 
 ---
 
@@ -28,29 +29,43 @@
 
 ---
 
-### Step 2: スプレッドシートにヘッダー行を設定
+### Step 2: ヘッダー行の確認（自動設定済み）
+
+スプレッドシートのヘッダー行は自動設定済みです。念のため確認してください：
 
 1. **スプレッドシートを開く**
 
-2. **1行目（A1からF1）に以下を入力:**
+2. **1行目（A1からF1）を確認:**
 
 | A1 | B1 | C1 | D1 | E1 | F1 |
 |----|----|----|----|----|----|
 | タイムスタンプ | ステータス | 記事タイトル | ツイート文案 | 記事URL | ソース |
 
-3. **保存**（自動保存されます）
-
-✅ **完了:** [ ] ヘッダー行を設定
+✅ **完了:** [ ] ヘッダー行を確認（既に設定済み）
 
 ---
 
 ## 🎯 オプション設定（即時承認機能を使用する場合）
 
-### Step 3: Apps Scriptを設定
+### Step 3: ZapierでWebhookを作成（オプション）
 
-**推奨:** まずは定期実行（Step 2まで）で動作確認してから、必要に応じて設定
+**推奨:** まずは定期実行（Step 1-2まで）で動作確認してから、必要に応じて設定
 
-**詳細:** `docs/GAS_TRIGGER_SETUP_COMPLETE.md`
+#### 最短手順（5分で完了）
+
+1. **Zapierにアクセス:** https://zapier.com/
+2. **「Create Zap」をクリック**
+3. **「Webhooks by Zapier」→「Catch Hook」を選択**
+4. **Webhook URLをコピー**（重要！）
+5. **「X (Twitter)」→「Create Tweet」を追加**
+6. **`{{1__tweet_text}}` を設定**
+7. **Zapを公開**
+8. **Google Apps ScriptにWebhook URLを設定**
+
+**詳細:** `docs/ZAPIER_QUICK_START.md`（5分で完了）
+**詳細手順:** `docs/ZAPIER_WEBHOOK_SETUP_GUIDE.md`（ステップバイステップ）
+
+✅ **完了:** [ ] ZapierでWebhookを作成（オプション）
 
 ---
 
@@ -76,19 +91,46 @@ python3 automation/social_media/scheduled_tweet.py
 python3 automation/social_media/approval_manager.py list
 ```
 
+✅ **完了:** [ ] テスト実行
+
 ---
 
-## ✅ 完了チェックリスト
+## ✅ 完了チェックリスト（まとめ）
 
 ### 必須項目
 
 - [ ] **Step 1:** スプレッドシートをサービスアカウントに共有
-- [ ] **Step 2:** スプレッドシートにヘッダー行を設定
+- [ ] **Step 2:** ヘッダー行を確認（既に設定済み）
 - [ ] **Step 4:** テスト実行
 
 ### 推奨項目（後で設定可能）
 
-- [ ] **Step 3:** Apps Scriptを設定（即時承認機能を使用する場合）
+- [ ] **Step 3:** ZapierでWebhookを作成（即時承認機能を使用する場合）
+  - クイックスタート: `docs/ZAPIER_QUICK_START.md`（5分で完了）
+  - 詳細手順: `docs/ZAPIER_WEBHOOK_SETUP_GUIDE.md`
+
+---
+
+## 💡 即時承認機能を使わない場合（推奨・簡単）
+
+**定期実行スクリプトを使用:**
+- 毎朝7:15に承認済みツイートを自動投稿
+- 設定が簡単（Zapier不要）
+- コスト無料
+
+**設定方法:**
+```bash
+# 毎日7:15に実行（cronやタスクスケジューラで設定）
+python3 automation/social_media/approve_tweet.py auto
+```
+
+**メリット:**
+- ✅ 設定が簡単（この手順不要）
+- ✅ 追加サービス不要
+- ✅ コスト無料
+
+**デメリット:**
+- ⚠️ 承認後、次回の定期実行時刻（7:15）まで待つ必要がある
 
 ---
 
@@ -107,11 +149,11 @@ python3 automation/social_media/approval_manager.py list
 
 ### 自動投稿
 
-**方法A:** 定期実行（7:15に自動投稿）
+**方法A:** 定期実行（7:15に自動投稿・推奨）
 - 設定不要
 - 次の定期実行時刻（7:15）に自動投稿
 
-**方法B:** 即時承認（GASトリガー）
+**方法B:** 即時承認（GASトリガー + Zapier）
 - Apps Scriptを設定（Step 3）
 - 承認した瞬間にツイート投稿
 
@@ -122,10 +164,10 @@ python3 automation/social_media/approval_manager.py list
 1. **Step 1-2を完了**（必須）
 2. **テスト実行**（必須）
 3. **動作確認**（必須）
-4. **Apps Scriptを設定**（オプション・後で設定可能）
+4. **Zapierを設定**（オプション・後で設定可能）
 
 ---
 
-詳細は `docs/FINAL_SETUP_STEPS.md` を参照してください。
+詳細は `docs/FINAL_SETUP_STEPS.md` と `docs/ZAPIER_QUICK_START.md` を参照してください。
 
-上記の2ステップを完了すれば、基本機能は動作します！
+まずは Step 1（スプレッドシートの共有）を完了してください。これで基本機能は動作します！
