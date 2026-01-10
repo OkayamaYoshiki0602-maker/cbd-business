@@ -42,16 +42,19 @@ def generate_news_tweet_with_ai(news_title, news_content, news_url=None, max_len
             
             genai.configure(api_key=GEMINI_API_KEY)
             try:
-                model = genai.GenerativeModel('gemini-1.5-flash')  # 最新モデル
+                model = genai.GenerativeModel('gemini-2.5-flash')  # 最新の安定版
             except:
                 try:
-                    model = genai.GenerativeModel('gemini-pro')  # フォールバック
+                    model = genai.GenerativeModel('gemini-3-flash-preview')  # 最新のプレビュー版
                 except:
-                    models = genai.list_models()
-                    if models:
-                        model = genai.GenerativeModel(models[0].name)
-                    else:
-                        raise ValueError("利用可能なGeminiモデルが見つかりません")
+                    try:
+                        model = genai.GenerativeModel('gemini-2.0-flash')  # フォールバック
+                    except:
+                        models = genai.list_models()
+                        if models:
+                            model = genai.GenerativeModel(models[0].name)
+                        else:
+                            raise ValueError("利用可能なGeminiモデルが見つかりません")
             
             # URLの長さを考慮（TwitterではURLは23文字としてカウント）
             url_length = 23 if news_url else 0

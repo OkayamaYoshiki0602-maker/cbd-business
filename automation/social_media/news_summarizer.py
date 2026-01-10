@@ -134,13 +134,13 @@ def summarize_with_gemini(text, max_length=200):
         # Geminiモデルを使用（利用可能なモデルを試行）
         # まず最新モデルを試行、失敗したら旧モデルを使用
         try:
-            model = genai.GenerativeModel('gemini-1.5-flash')  # 最新モデル
+            model = genai.GenerativeModel('gemini-2.5-flash')  # 最新の安定版
         except:
             try:
-                model = genai.GenerativeModel('gemini-pro')  # フォールバック: 標準モデル
+                model = genai.GenerativeModel('gemini-3-flash-preview')  # 最新のプレビュー版
             except:
                 try:
-                    model = genai.GenerativeModel('models/gemini-pro')  # フォールバック: モデル名プレフィックス付き
+                    model = genai.GenerativeModel('gemini-2.0-flash')  # フォールバック
                 except:
                     # 利用可能なモデルをリストして使用
                     models = genai.list_models()

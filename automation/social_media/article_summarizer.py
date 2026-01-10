@@ -108,13 +108,19 @@ def summarize_article_with_highlights(article_url, article_title, max_length=200
             
             genai.configure(api_key=GEMINI_API_KEY)
             try:
-                model = genai.GenerativeModel('gemini-pro')
+                model = genai.GenerativeModel('gemini-2.5-flash')  # 最新の安定版
             except:
-                models = genai.list_models()
-                if models:
-                    model = genai.GenerativeModel(models[0].name)
-                else:
-                    raise ValueError("利用可能なGeminiモデルが見つかりません")
+                try:
+                    model = genai.GenerativeModel('gemini-3-flash-preview')  # 最新のプレビュー版
+                except:
+                    try:
+                        model = genai.GenerativeModel('gemini-2.0-flash')  # フォールバック
+                    except:
+                        models = genai.list_models()
+                        if models:
+                            model = genai.GenerativeModel(models[0].name)
+                        else:
+                            raise ValueError("利用可能なGeminiモデルが見つかりません")
             
             prompt = f"""あなたはCBD・大麻分野の専門ライターです。
 

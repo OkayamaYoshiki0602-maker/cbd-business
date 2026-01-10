@@ -166,6 +166,7 @@ def check_wordpress_rss(last_check_date=None):
 def add_to_approval_queue(article_title, tweet_text, article_url=None, source='wordpress'):
     """
     承認待ちリストに追加（スプレッドシート）
+    重複チェック機能付き: 同じ記事タイトルとソースで本日追加されたものがないか確認
     
     Args:
         article_title: 記事タイトル
@@ -202,6 +203,24 @@ def add_to_approval_queue(article_title, tweet_text, article_url=None, source='w
             headers = ['タイムスタンプ', 'ステータス', '記事タイトル', 'ツイート文案', '記事URL', 'ソース']
             approval_data[0] = headers
         
+        # 重複チェック: 同じ記事タイトルとソースで本日追加されたものがないか確認
+        today = datetime.now().date().isoformat()
+        if len(approval_data) > 1:  # ヘッダー行以外にデータがある場合
+            for row in approval_data[1:]:  # ヘッダー行をスキップ
+                if len(row) >= 6:  # データが完全な場合
+                    # タイムスタンプから日付を抽出
+                    existing_timestamp = row[0] if row[0] else ''
+                    existing_title = row[2] if len(row) > 2 else ''
+                    existing_source = row[5] if len(row) > 5 else ''
+                    
+                    # 同じ記事タイトルとソースで本日追加されたものかチェック
+                    if existing_timestamp.startswith(today) and existing_title == article_title and existing_source == source:
+                        print(f"⚠️ 重複エントリーを検出しました（スキップ）")
+                        print(f"  記事タイトル: {article_title}")
+                        print(f"  ソース: {source}")
+                        print(f"  既存エントリーのタイムスタンプ: {existing_timestamp}")
+                        return False  # 重複のため追加しない
+        
         # 新しい行を追加
         new_row = [
             datetime.now().isoformat(),
@@ -228,6 +247,8 @@ def add_to_approval_queue(article_title, tweet_text, article_url=None, source='w
     
     except Exception as e:
         print(f"❌ エラーが発生しました: {e}")
+        import traceback
+        traceback.print_exc()
         return False
 
 
