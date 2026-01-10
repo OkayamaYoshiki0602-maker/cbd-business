@@ -136,8 +136,15 @@ def add_to_approval_queue(article_title, tweet_text, article_url=None, source='w
         
         # ヘッダー行を確認
         if not approval_data:
-            # ヘッダー行を作成
+            # ヘッダー行を作成（スプレッドシートに書き込む）
             headers = ['タイムスタンプ', 'ステータス', '記事タイトル', 'ツイート文案', '記事URL', 'ソース']
+            # スプレッドシートにヘッダー行を書き込む（シート名は最初のシートを使用）
+            range_name = 'シート1!A1:F1'  # または 'Sheet1!A1:F1'
+            try:
+                write_spreadsheet(APPROVAL_SPREADSHEET_ID, range_name, [headers])
+            except:
+                # シート名が違う場合、エラーを無視して続行
+                pass
             approval_data = [headers]
         elif len(approval_data[0]) < 6:
             # ヘッダー行が不完全な場合は補完

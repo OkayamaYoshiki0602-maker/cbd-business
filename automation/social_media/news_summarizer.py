@@ -131,8 +131,20 @@ def summarize_with_gemini(text, max_length=200):
             raise ValueError("GEMINI_API_KEYが設定されていません")
         
         genai.configure(api_key=GEMINI_API_KEY)
-        # 最新のGeminiモデルを使用
-        model = genai.GenerativeModel('gemini-1.5-flash')  # または 'gemini-1.5-pro'
+        # Geminiモデルを使用（利用可能なモデルを試行）
+        # まず最新モデルを試行、失敗したら旧モデルを使用
+        try:
+            model = genai.GenerativeModel('gemini-pro')  # 標準モデル
+        except:
+            try:
+                model = genai.GenerativeModel('models/gemini-pro')  # モデル名プレフィックス付き
+            except:
+                # 利用可能なモデルをリストして使用
+                models = genai.list_models()
+                if models:
+                    model = genai.GenerativeModel(models[0].name)
+                else:
+                    raise ValueError("利用可能なGeminiモデルが見つかりません")
         
         prompt = f"""あなたはCBD・大麻分野の専門ライターです。以下のニュースを{max_length}文字以内で簡潔で正確に要約してください。
 
