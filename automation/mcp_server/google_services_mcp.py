@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Google Services MCP Server
-Googleサービスと連携するカスタムMCPサーバー（stdio版）
+Googleサービスと連携するカスタムMCPサーバー（stdio版 - 簡易実装）
 """
 
 import sys
@@ -19,14 +19,18 @@ try:
     from google_services.ga4 import get_report, format_report_data, get_summary_stats
 except ImportError as e:
     print(f"Error importing Google services modules: {e}", file=sys.stderr)
+    print(f"Python path: {sys.path}", file=sys.stderr)
     sys.exit(1)
 
 # MCPプロトコル（簡易版 - stdio経由）
 def send_response(response):
     """MCPプロトコルに従ってレスポンスを送信"""
-    json.dump(response, sys.stdout)
-    sys.stdout.write("\n")
-    sys.stdout.flush()
+    try:
+        json.dump(response, sys.stdout, ensure_ascii=False)
+        sys.stdout.write("\n")
+        sys.stdout.flush()
+    except Exception as e:
+        print(f"Error sending response: {e}", file=sys.stderr)
 
 def handle_request(request):
     """MCPリクエストを処理"""
@@ -35,7 +39,24 @@ def handle_request(request):
         params = request.get("params", {})
         request_id = request.get("id")
         
-        if method == "tools/list":
+        if method == "initialize":
+            # 初期化メッセージ
+            send_response({
+                "jsonrpc": "2.0",
+                "id": request_id,
+                "result": {
+                    "protocolVersion": "2024-11-05",
+                    "capabilities": {
+                        "tools": {}
+                    },
+                    "serverInfo": {
+                        "name": "google-services-mcp",
+                        "version": "1.0.0"
+                    }
+                }
+            })
+        
+        elif method == "tools/list":
             # ツール一覧を返す
             tools = [
                 {
@@ -172,7 +193,7 @@ def handle_request(request):
                     "id": request_id,
                     "error": {
                         "code": -32000,
-                        "message": str(e)
+                        "message": f"ツール実行エラー: {str(e)}"
                     }
                 })
         
@@ -199,37 +220,24 @@ def handle_request(request):
 def main():
     """メイン関数 - stdio経由でMCPプロトコルを処理"""
     try:
-        # 初期化メッセージを送信
-        send_response({
-            "jsonrpc": "2.0",
-            "method": "initialize",
-            "params": {
-                "protocolVersion": "2024-11-05",
-                "capabilities": {
-                    "tools": {}
-                },
-                "serverInfo": {
-                    "name": "google-services-mcp",
-                    "version": "1.0.0"
-                }
-            }
-        })
-        
         # リクエストを読み込んで処理
         for line in sys.stdin:
             if not line.strip():
                 continue
             
             try:
-                request = json.loads(line)
+                request = json.loads(line.strip())
                 handle_request(request)
-            except json.JSONDecodeError:
+            except json.JSONDecodeError as e:
+                print(f"JSON decode error: {e}", file=sys.stderr)
                 continue
     
     except KeyboardInterrupt:
         pass
     except Exception as e:
         print(f"Error: {e}", file=sys.stderr)
+        import traceback
+        traceback.print_exc(file=sys.stderr)
         sys.exit(1)
 
 if __name__ == '__main__':
