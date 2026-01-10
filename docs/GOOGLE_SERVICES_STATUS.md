@@ -72,30 +72,33 @@ python3 automation/google_services/google_sheets.py read "スプレッドシー�
 
 ## ⚠️ 要設定・確認の機能
 
-### 4. GA4本日アクセス数 ⚠️
+### 4. GA4本日アクセス数 ✅
 
-**状態:** 権限エラー
+**状態:** 正常動作中
 
-**エラーメッセージ:**
+**テスト結果:**
+- ✅ 本日のアクセス数取得成功
+- ✅ 過去7日間の統計取得成功
+
+**取得データ例（2025年1月11日）:**
+- 本日のセッション数: 3
+- 本日のページビュー数: 3
+- 本日のアクティブユーザー数: 3
+
+**過去7日間の統計:**
+- セッション数: 13
+- ページビュー数: 14
+- アクティブユーザー数: 13
+- 1日あたりのPV（平均）: 2.0
+
+**使用方法:**
+```bash
+# 本日のアクセス数
+python3 automation/google_services/ga4.py today 505457597
+
+# 過去N日間の統計（デフォルト: 7日間）
+python3 automation/google_services/ga4.py summary 505457597 7
 ```
-403 User does not have sufficient permissions for this property.
-```
-
-**原因:**
-- APIは有効化済み
-- サービスアカウントにGA4プロパティへの権限が付与されていない
-
-**対応方法:**
-1. GA4プロパティ `505457597` にサービスアカウントを追加
-   - サービスアカウント: `cursor-mcp@acoustic-skein-329303.iam.gserviceaccount.com`
-2. GA4の設定画面で:
-   - 管理 > プロパティアクセス管理
-   - ユーザーを追加
-   - メールアドレス: `cursor-mcp@acoustic-skein-329303.iam.gserviceaccount.com`
-   - 役割: 閲覧者（または必要に応じて他の役割）
-
-**確認URL:**
-- GA4プロパティ設定: https://analytics.google.com/analytics/web/#/p505457597/admin/propertyaccess
 
 ---
 
@@ -125,7 +128,8 @@ python3 automation/google_services/google_sheets.py read "スプレッドシー�
 | Googleカレンダー予定作成 | ✅ **使用可能** | 即座に使用可能 |
 | スプレッドシート新規タブ作成 | ✅ **使用可能** | 即座に使用可能 |
 | スプレッドシートデータ読み込み | ✅ **使用可能** | 即座に使用可能 |
-| GA4本日アクセス数 | ⚠️ **要設定** | プロパティ権限の付与が必要 |
+| GA4本日アクセス数 | ✅ **使用可能** | 正常動作中 |
+| GA4統計（過去N日間） | ✅ **使用可能** | 正常動作中 |
 | Gmailメール確認 | ❌ **要実装** | OAuth 2.0認証が必要 |
 
 ---
@@ -136,11 +140,8 @@ python3 automation/google_services/google_sheets.py read "スプレッドシー�
 1. ✅ **Googleカレンダー** - 予定作成・管理
 2. ✅ **スプレッドシート** - タブ作成・データ読み込み・書き込み
 
-### 要設定
-3. ⚠️ **GA4** - プロパティ権限の付与
-
 ### 要実装
-4. ❌ **Gmail** - OAuth 2.0認証の実装
+3. ❌ **Gmail** - OAuth 2.0認証の実装
 
 ---
 
@@ -150,14 +151,13 @@ python3 automation/google_services/google_sheets.py read "スプレッドシー�
 - ✅ Googleカレンダー予定作成
 - ✅ スプレッドシート新規タブ作成（"CBDプロジェクト管理"）
 - ✅ スプレッドシートデータ読み込み
-
-**要設定:**
-- ⚠️ GA4: プロパティ権限の付与
+- ✅ GA4本日アクセス数取得
+- ✅ GA4統計（過去N日間）取得
 
 **要実装:**
 - ❌ Gmail: OAuth 2.0認証
 
 **評価:**
-- 主要機能（カレンダー・スプレッドシート）は正常に動作
-- GA4は設定後すぐに使用可能
-- Gmailは将来的な実装が必要
+- ✅ 主要機能（カレンダー・スプレッドシート・GA4）はすべて正常に動作
+- ✅ GA4の本日アクセス数と統計データの取得が可能
+- ❌ Gmailは将来的な実装が必要
