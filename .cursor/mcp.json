@@ -1,0 +1,65 @@
+{
+    "mcpServers": {
+        "github": {
+            "command": "npx",
+            "args": [
+                "-y",
+                "@modelcontextprotocol/server-github"
+            ],
+            "env": {
+                "GITHUB_TOKEN": "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"
+            }
+        },
+        "google-drive": {
+            "command": "npx",
+            "args": [
+                "-y",
+                "@modelcontextprotocol/server-google-drive"
+            ],
+            "env": {
+                "GOOGLE_DRIVE_CREDENTIALS": "/Users/okayamayoshiki/.config/cursor/google-drive-credentials.json"
+            }
+        },
+        "google-calendar": {
+            "command": "npx",
+            "args": [
+                "-y",
+                "@modelcontextprotocol/server-google-calendar"
+            ],
+            "env": {
+                "GOOGLE_APPLICATION_CREDENTIALS": "/Users/okayamayoshiki/.config/cursor/google-drive-credentials.json"
+            }
+        },
+        "gmail": {
+            "command": "npx",
+            "args": [
+                "-y",
+                "@modelcontextprotocol/server-gmail"
+            ],
+            "env": {
+                "GOOGLE_APPLICATION_CREDENTIALS": "/Users/okayamayoshiki/.config/cursor/google-drive-credentials.json"
+            }
+        },
+        "google-sheets": {
+            "command": "npx",
+            "args": [
+                "-y",
+                "@modelcontextprotocol/server-google-sheets"
+            ],
+            "env": {
+                "GOOGLE_APPLICATION_CREDENTIALS": "/Users/okayamayoshiki/.config/cursor/google-drive-credentials.json"
+            }
+        },
+        "ga4": {
+            "command": "npx",
+            "args": [
+                "-y",
+                "@modelcontextprotocol/server-ga4"
+            ],
+            "env": {
+                "GOOGLE_APPLICATION_CREDENTIALS": "/Users/okayamayoshiki/.config/cursor/google-drive-credentials.json",
+                "GA4_PROPERTY_ID": "505457597"
+            }
+        }
+    }
+}
