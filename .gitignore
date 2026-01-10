@@ -7,7 +7,7 @@
 *.json
 !package.json
 !package-lock.json
-!mcp_settings_template.json
+!config/mcp_settings_template.json
 credentials.json
 google-drive-credentials.json
 .env
