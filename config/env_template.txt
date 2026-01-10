@@ -1,0 +1,17 @@
+# X (Twitter) API認証情報
+# X Developer Portal (https://developer.twitter.com/) で取得
+X_API_KEY=your_api_key_here
+X_API_SECRET_KEY=your_api_secret_key_here
+X_ACCESS_TOKEN=your_access_token_here
+X_ACCESS_TOKEN_SECRET=your_access_token_secret_here
+X_BEARER_TOKEN=your_bearer_token_here
+
+# LINE Messaging API認証情報
+# LINE Developers (https://developers.line.biz/) で取得
+LINE_CHANNEL_ACCESS_TOKEN=your_channel_access_token_here
+LINE_USER_ID=your_user_id_here
+
+# WordPress設定（任意）
+WORDPRESS_URL=https://cbd-no-hito.com
+WORDPRESS_USERNAME=your_username
+WORDPRESS_APP_PASSWORD=your_app_password
