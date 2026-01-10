@@ -1,5 +1,15 @@
 {
   "mcpServers": {
+    "github": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-github"
+      ],
+      "env": {
+        "GITHUB_TOKEN": "YOUR_GITHUB_PERSONAL_ACCESS_TOKEN_HERE"
+      }
+    },
     "google-drive": {
       "command": "npx",
       "args": [
@@ -10,14 +20,45 @@
         "GOOGLE_DRIVE_CREDENTIALS": "~/.config/cursor/google-drive-credentials.json"
       }
     },
-    "github": {
+    "google-calendar": {
       "command": "npx",
       "args": [
         "-y",
-        "@modelcontextprotocol/server-github"
+        "@modelcontextprotocol/server-google-calendar"
       ],
       "env": {
-        "GITHUB_TOKEN": "YOUR_GITHUB_PERSONAL_ACCESS_TOKEN_HERE"
+        "GOOGLE_APPLICATION_CREDENTIALS": "~/.config/cursor/google-drive-credentials.json"
+      }
+    },
+    "gmail": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-gmail"
+      ],
+      "env": {
+        "GOOGLE_APPLICATION_CREDENTIALS": "~/.config/cursor/google-drive-credentials.json"
+      }
+    },
+    "google-sheets": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-google-sheets"
+      ],
+      "env": {
+        "GOOGLE_APPLICATION_CREDENTIALS": "~/.config/cursor/google-drive-credentials.json"
+      }
+    },
+    "ga4": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-ga4"
+      ],
+      "env": {
+        "GOOGLE_APPLICATION_CREDENTIALS": "~/.config/cursor/google-drive-credentials.json",
+        "GA4_PROPERTY_ID": "YOUR_GA4_PROPERTY_ID_HERE"
       }
     }
   }
