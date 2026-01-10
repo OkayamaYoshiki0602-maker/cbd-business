@@ -13,7 +13,7 @@
 const CONFIG = {
   // Webhook URL（Zapier推奨）
   // Zapierで「Webhooks by Zapier」→「Catch Hook」を作成し、URLをコピー
-  WEBHOOK_URL: 'https://hooks.zapier.com/hooks/catch/YOUR/WEBHOOK/ID',
+  WEBHOOK_URL: 'https://hooks.zapier.com/hooks/catch/25995545/ug3pexl/',
   
   // または、独自APIエンドポイント（Google Cloud Functions、AWS Lambdaなど）
   // API_ENDPOINT: 'https://your-api-endpoint.com/api/approve-tweet',
