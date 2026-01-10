@@ -37,11 +37,33 @@ X自動ツイート機能と連携して、以下の機能を実現：
 
 ### Step 4: Channel Access Token を取得
 
-1. 作成したチャネルを開く
-2. 「Messaging API」タブを開く
-3. 「Channel access token」セクションで「Issue」ボタンをクリック
-4. Channel access token が表示される
-5. **コピーして保存**（一度しか表示されません）
+**重要:** Channel Access Token は **LINE Developers コンソール** で取得します。
+
+#### 方法A: LINE Developers コンソール経由（推奨）
+
+1. LINE Developers にアクセス: https://developers.line.biz/
+2. プロバイダー「CBD WORLD」を選択
+3. チャネル「CBD Auto Tweet」を選択
+4. **「Messaging API」タブを開く**
+5. **「Channel access token」セクションで「Issue」または「発行」ボタンをクリック**
+6. Channel access token が表示される
+7. **コピーして保存**（一度しか表示されません）
+
+#### 方法B: LINE Official Account Manager経由
+
+1. LINE Official Account Manager にアクセス: https://manager.line.biz/
+2. 「CBD WORLD」を選択
+3. 「設定」タブを開く
+4. 「Messaging API」を選択
+5. **「Channel Access Token」セクションで「発行」ボタンをクリック**
+6. Channel access token が表示される
+7. **コピーして保存**（一度しか表示されません）
+
+### Step 4-1: Channel Access Token が見つからない場合
+
+- 「Issue」または「発行」ボタンが表示されない場合、既に発行済みの可能性があります
+- その場合は、「Reissue」または「再発行」ボタンをクリック
+- **注意:** 再発行すると、既存のトークンが無効になります
 
 ### Step 5: ユーザーIDの取得（オプション）
 
