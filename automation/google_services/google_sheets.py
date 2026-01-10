@@ -101,6 +101,70 @@ def write_spreadsheet(spreadsheet_id, range_name, values):
         return False
 
 
+def create_sheet(spreadsheet_id, sheet_title):
+    """
+    スプレッドシートに新しいシートを作成
+    
+    Args:
+        spreadsheet_id: スプレッドシートID
+        sheet_title: 新しいシートのタイトル
+    
+    Returns:
+        作成されたシートの情報
+    """
+    try:
+        credentials = get_credentials()
+        service = build('sheets', 'v4', credentials=credentials)
+        
+        request = {
+            'requests': [{
+                'addSheet': {
+                    'properties': {
+                        'title': sheet_title
+                    }
+                }
+            }]
+        }
+        
+        response = service.spreadsheets().batchUpdate(
+            spreadsheetId=spreadsheet_id,
+            body=request
+        ).execute()
+        
+        added_sheet = response.get('replies', [])[0].get('addSheet', {}).get('properties', {})
+        return added_sheet
+    
+    except HttpError as error:
+        print(f"エラーが発生しました: {error}")
+        return None
+
+
+def list_sheets(spreadsheet_id):
+    """
+    スプレッドシート内のシート一覧を取得
+    
+    Args:
+        spreadsheet_id: スプレッドシートID
+    
+    Returns:
+        シート一覧
+    """
+    try:
+        credentials = get_credentials()
+        service = build('sheets', 'v4', credentials=credentials)
+        
+        spreadsheet = service.spreadsheets().get(
+            spreadsheetId=spreadsheet_id
+        ).execute()
+        
+        sheets = spreadsheet.get('sheets', [])
+        return sheets
+    
+    except HttpError as error:
+        print(f"エラーが発生しました: {error}")
+        return None
+
+
 def list_spreadsheets(query='', max_results=10):
     """
     Google Driveからスプレッドシート一覧を取得

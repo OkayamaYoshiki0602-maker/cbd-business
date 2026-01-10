@@ -121,6 +121,39 @@ def format_report_data(response):
     }
 
 
+def get_today_stats(property_id):
+    """
+    本日のアクセス統計を取得
+    
+    Args:
+        property_id: GA4プロパティID
+    
+    Returns:
+        本日の統計データ
+    """
+    response = get_report(
+        property_id,
+        date_range_days=1,
+        metrics=["sessions", "screenPageViews", "activeUsers"]
+    )
+    
+    if not response or not response.rows:
+        return None
+    
+    # 本日のデータ（最新の1日）
+    row = response.rows[0]
+    sessions = int(row.metric_values[0].value) if len(row.metric_values) > 0 else 0
+    pageviews = int(row.metric_values[1].value) if len(row.metric_values) > 1 else 0
+    users = int(row.metric_values[2].value) if len(row.metric_values) > 2 else 0
+    
+    return {
+        'sessions': sessions,
+        'pageviews': pageviews,
+        'active_users': users,
+        'date': row.dimension_values[0].value if row.dimension_values else '本日'
+    }
+
+
 def get_summary_stats(property_id, date_range_days=7):
     """
     サマリー統計を取得

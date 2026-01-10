@@ -15,8 +15,10 @@ sys.path.insert(0, str(SCRIPT_DIR))
 
 # Googleサービスモジュールをインポート
 try:
-    from google_services.google_sheets import read_spreadsheet, write_spreadsheet, list_spreadsheets
-    from google_services.ga4 import get_report, format_report_data, get_summary_stats
+    from google_services.google_sheets import read_spreadsheet, write_spreadsheet, list_spreadsheets, create_sheet, list_sheets
+    from google_services.ga4 import get_report, format_report_data, get_summary_stats, get_today_stats
+    from google_services.google_calendar import create_event, list_events, list_calendars
+    from google_services.gmail import list_messages, get_message, decode_message_body
 except ImportError as e:
     print(f"Error importing Google services modules: {e}", file=sys.stderr)
     print(f"Python path: {sys.path}", file=sys.stderr)
@@ -110,6 +112,55 @@ def handle_request(request):
                         "properties": {
                             "property_id": {"type": "string", "description": "GA4プロパティID", "default": "505457597"},
                             "days": {"type": "integer", "description": "日数", "default": 7}
+                        }
+                    }
+                },
+                {
+                    "name": "get_ga4_today",
+                    "description": "GA4の本日のアクセス数を取得",
+                    "inputSchema": {
+                        "type": "object",
+                        "properties": {
+                            "property_id": {"type": "string", "description": "GA4プロパティID", "default": "505457597"}
+                        }
+                    }
+                },
+                {
+                    "name": "create_calendar_event",
+                    "description": "Googleカレンダーに予定を作成",
+                    "inputSchema": {
+                        "type": "object",
+                        "properties": {
+                            "summary": {"type": "string", "description": "イベントのタイトル"},
+                            "start_time": {"type": "string", "description": "開始時刻（ISO形式: 2025-01-11T14:00:00）"},
+                            "end_time": {"type": "string", "description": "終了時刻（ISO形式: 2025-01-11T15:00:00）"},
+                            "description": {"type": "string", "description": "説明", "default": ""},
+                            "location": {"type": "string", "description": "場所", "default": ""},
+                            "calendar_id": {"type": "string", "description": "カレンダーID", "default": "primary"}
+                        },
+                        "required": ["summary", "start_time"]
+                    }
+                },
+                {
+                    "name": "create_sheet_tab",
+                    "description": "スプレッドシートに新しいシート（タブ）を作成",
+                    "inputSchema": {
+                        "type": "object",
+                        "properties": {
+                            "spreadsheet_id": {"type": "string", "description": "スプレッドシートID"},
+                            "sheet_title": {"type": "string", "description": "新しいシートのタイトル"}
+                        },
+                        "required": ["spreadsheet_id", "sheet_title"]
+                    }
+                },
+                {
+                    "name": "list_gmail_messages",
+                    "description": "Gmailのメール一覧を取得（okayamayoshiki0602o@gmail.com）",
+                    "inputSchema": {
+                        "type": "object",
+                        "properties": {
+                            "max_results": {"type": "integer", "description": "最大取得件数", "default": 10},
+                            "query": {"type": "string", "description": "検索クエリ（例: 'is:unread'）", "default": ""}
                         }
                     }
                 }
