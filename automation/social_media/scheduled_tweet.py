@@ -16,6 +16,8 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from social_media.article_detector import check_wordpress_rss, add_to_approval_queue
 from social_media.tweet_generator_v2 import generate_buzz_tweet, generate_news_tweet
 from social_media.line_notify import send_line_message
+from social_media.news_collector import collect_cbd_news, summarize_news_articles
+from social_media.news_summarizer import summarize_news
 from google_services.google_sheets import read_spreadsheet
 
 # .envファイルを読み込む
@@ -27,36 +29,62 @@ APPROVAL_SPREADSHEET_ID = os.getenv('APPROVAL_SPREADSHEET_ID', '')
 
 def summarize_article_trends():
     """
-    記事動向を要約
+    記事動向を要約（WordPress記事 + CBD・大麻関連ニュース）
     
     Returns:
         記事動向要約テキスト
     """
     try:
-        # WordPress RSSフィードから新着記事を取得
-        new_articles = check_wordpress_rss()
+        summaries = []
         
-        if not new_articles:
-            return "📰 記事動向：\n新着記事はありません"
+        # 1. WordPress記事を取得
+        wordpress_articles = check_wordpress_rss()
+        if wordpress_articles:
+            wp_summary = f"📝 WordPress記事（{len(wordpress_articles)}件）：\n\n"
+            for i, article in enumerate(wordpress_articles[:3], 1):  # 最大3件
+                title = article['title']
+                url = article.get('url', '')
+                wp_summary += f"{i}. {title}\n"
+                if url:
+                    wp_summary += f"   {url}\n"
+                wp_summary += "\n"
+            summaries.append(wp_summary)
         
-        # 記事動向を要約
-        summary = f"📰 記事動向（{len(new_articles)}件の新着記事）：\n\n"
+        # 2. CBD・大麻関連ニュースを取得
+        print("📰 CBD・大麻関連ニュースを収集しています...")
+        cbd_news = collect_cbd_news(hours=24, max_articles=5)
         
-        for i, article in enumerate(new_articles[:5], 1):  # 最大5件
-            title = article['title']
-            url = article.get('url', '')
-            summary += f"{i}. {title}\n"
-            if url:
-                summary += f"   {url}\n"
-            summary += "\n"
+        if cbd_news:
+            news_summary = f"📰 CBD・大麻関連ニュース（{len(cbd_news)}件）：\n\n"
+            for i, news in enumerate(cbd_news[:3], 1):  # 最大3件
+                title = news['title']
+                url = news.get('url', '')
+                summary_text = news.get('summary', '')
+                
+                # AI要約（可能な場合）
+                if summary_text:
+                    summarized = summarize_news(f"{title} {summary_text}", max_length=100, use_ai='auto')
+                    if summarized and summarized != summary_text:
+                        news_summary += f"{i}. {title}\n   {summarized}\n"
+                    else:
+                        news_summary += f"{i}. {title}\n"
+                else:
+                    news_summary += f"{i}. {title}\n"
+                
+                if url:
+                    news_summary += f"   {url}\n"
+                news_summary += "\n"
+            summaries.append(news_summary)
         
-        if len(new_articles) > 5:
-            summary += f"...他 {len(new_articles) - 5}件\n"
+        if not summaries:
+            return "📰 記事動向：\n新着記事・ニュースはありません"
         
-        return summary
+        return "\n---\n".join(summaries)
     
     except Exception as e:
         print(f"⚠️ 記事動向要約の取得に失敗: {e}")
+        import traceback
+        traceback.print_exc()
         return "📰 記事動向：\n取得に失敗しました"
 
 
