@@ -9,13 +9,6 @@
       "env": {
         "GITHUB_TOKEN": "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"
       }
-    },
-    "google-services": {
-      "command": "python3",
-      "args": [
-        "/Users/okayamayoshiki/Library/CloudStorage/GoogleDrive-okayamayoshiki0602o@gmail.com/マイドライブ/cursor/automation/mcp_server/google_services_mcp.py"
-      ],
-      "env": {}
     }
   }
 }
