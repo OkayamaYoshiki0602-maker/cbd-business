@@ -131,7 +131,8 @@ def summarize_with_gemini(text, max_length=200):
             raise ValueError("GEMINI_API_KEYが設定されていません")
         
         genai.configure(api_key=GEMINI_API_KEY)
-        model = genai.GenerativeModel('gemini-pro')
+        # 最新のGeminiモデルを使用
+        model = genai.GenerativeModel('gemini-1.5-flash')  # または 'gemini-1.5-pro'
         
         prompt = f"""あなたはCBD・大麻分野の専門ライターです。以下のニュースを{max_length}文字以内で簡潔で正確に要約してください。
 
