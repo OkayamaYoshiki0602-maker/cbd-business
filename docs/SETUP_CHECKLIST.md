@@ -136,9 +136,13 @@ GEMINI_API_KEY=ここにGemini_API_キーを貼り付け
 
 #### Step 2: スクリプトをコピー＆ペースト
 
-1. `automation/google_services/google_sheets_trigger.gs` の内容を開く
-2. すべてをコピー
-3. Apps Script エディタにペースト
+**⚠️ 重要:** このファイル（SETUP_CHECKLIST.md）ではなく、**`automation/google_services/google_sheets_trigger.gs`** の内容をコピーしてください。
+
+1. **`automation/google_services/google_sheets_trigger.gs` の内容を開く**
+   - ファイルパス: `automation/google_services/google_sheets_trigger.gs`
+   - または `docs/GAS_SETUP_GUIDE.md` を参照
+2. **すべてをコピー**
+3. **Apps Script エディタにペースト**
 
 #### Step 3: Webhook URLを設定
 
