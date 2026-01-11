@@ -105,16 +105,38 @@ def generate_tweet_text(article_title, article_summary=None, article_url=None):
         tweet_text += f"\n\n{short_url}"
     tweet_text += f"\n{hashtag}"
     
+    # ツイートフォーマッターを適用
+    try:
+        from social_media.tweet_formatter import format_tweet
+        tweet_text = format_tweet(tweet_text, style='elegant')
+    except Exception as e:
+        print(f"⚠️ ツイートフォーマットエラー: {e}")
+        # フォールバック: ハッシュタグのみ削除
+        tweet_text = re.sub(r'#\w+\s*', '', tweet_text)
+        tweet_text = tweet_text.strip()
+    
     # 最終チェック（念のため）
     if len(tweet_text) > 280:
-        # URLとハッシュタグを除いて調整
-        url_part = f"\n\n{short_url}" if short_url else ""
-        hashtag_part = f"\n{hashtag}"
-        main_text = tweet_text.replace(url_part, "").replace(hashtag_part, "").strip()
-        max_main_length = 280 - len(url_part) - len(hashtag_part) - 2
-        if len(main_text) > max_main_length:
-            main_text = main_text[:max_main_length-3] + "..."
-        tweet_text = f"{main_text}{url_part}{hashtag_part}"
+        # URLがあれば保持
+        url_match = re.search(r'(https?://[^\s]+)', tweet_text)
+        url = url_match.group(1) if url_match else None
+        
+        if url:
+            text_without_url = tweet_text.replace(url, '')
+            max_main_length = 280 - len(url) - 2
+            if len(text_without_url) > max_main_length:
+                last_period = text_without_url[:max_main_length].rfind('。')
+                if last_period > max_main_length * 0.7:
+                    text_without_url = text_without_url[:last_period+1]
+                else:
+                    text_without_url = text_without_url[:max_main_length-3] + '...'
+                tweet_text = f"{text_without_url}\n\n{url}"
+        else:
+            last_period = tweet_text[:280].rfind('。')
+            if last_period > 280 * 0.7:
+                tweet_text = tweet_text[:last_period+1]
+            else:
+                tweet_text = tweet_text[:277] + '...'
     
     return tweet_text
 

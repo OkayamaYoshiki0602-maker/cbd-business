@@ -105,18 +105,39 @@ def generate_news_tweet_with_ai(news_title, news_content, news_url=None, max_len
             if news_url:
                 short_url = shorten_url(news_url)
                 tweet_text += f"\n\n{short_url}"
-            tweet_text += f"\n{hashtag}"
+            
+            # ツイートフォーマッターを適用（ハッシュタグは削除、改行・タイトルを追加）
+            try:
+                from social_media.tweet_formatter import format_tweet
+                tweet_text = format_tweet(tweet_text, style='elegant')
+            except Exception as e:
+                print(f"⚠️ ツイートフォーマットエラー: {e}")
+                # フォールバック: ハッシュタグのみ削除
+                tweet_text = re.sub(r'#\w+\s*', '', tweet_text)
+                tweet_text = tweet_text.strip()
             
             # 最終チェック
             if len(tweet_text) > max_length:
-                # URLとハッシュタグを除いて調整
-                url_part = f"\n\n{short_url}" if news_url else ""
-                hashtag_part = f"\n{hashtag}"
-                main_text = tweet_text.replace(url_part, "").replace(hashtag_part, "").strip()
-                max_main_length = max_length - len(url_part) - len(hashtag_part) - 2
-                if len(main_text) > max_main_length:
-                    main_text = main_text[:max_main_length-3] + "..."
-                tweet_text = f"{main_text}{url_part}{hashtag_part}"
+                # URLがあれば保持
+                url_match = re.search(r'(https?://[^\s]+)', tweet_text)
+                url = url_match.group(1) if url_match else None
+                
+                if url:
+                    text_without_url = tweet_text.replace(url, '')
+                    max_main_length = max_length - len(url) - 2
+                    if len(text_without_url) > max_main_length:
+                        last_period = text_without_url[:max_main_length].rfind('。')
+                        if last_period > max_main_length * 0.7:
+                            text_without_url = text_without_url[:last_period+1]
+                        else:
+                            text_without_url = text_without_url[:max_main_length-3] + '...'
+                        tweet_text = f"{text_without_url}\n\n{url}"
+                else:
+                    last_period = tweet_text[:max_length].rfind('。')
+                    if last_period > max_length * 0.7:
+                        tweet_text = tweet_text[:last_period+1]
+                    else:
+                        tweet_text = tweet_text[:max_length-3] + '...'
             
             return tweet_text
         
