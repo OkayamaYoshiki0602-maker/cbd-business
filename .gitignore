@@ -79,3 +79,4 @@ test/
 debug/
 *.test.js
 *.spec.js
+.cursor/
