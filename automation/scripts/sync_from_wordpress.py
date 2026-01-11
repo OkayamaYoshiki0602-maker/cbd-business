@@ -24,6 +24,15 @@ from datetime import datetime
 project_root = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(project_root))
 
+# .envファイルを読み込む
+try:
+    from dotenv import load_dotenv
+    env_path = project_root / '.env'
+    if env_path.exists():
+        load_dotenv(env_path)
+except ImportError:
+    pass  # python-dotenvがインストールされていない場合はスキップ
+
 # WordPress REST API設定
 WORDPRESS_URL = os.getenv('WORDPRESS_URL', '').rstrip('/')
 WORDPRESS_USERNAME = os.getenv('WORDPRESS_USERNAME', '')
