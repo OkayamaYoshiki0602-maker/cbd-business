@@ -15,6 +15,7 @@ import os
 import sys
 import requests
 import base64
+import re
 from pathlib import Path
 from typing import Optional, Dict, Any
 
@@ -33,7 +34,8 @@ credentials = f"{WORDPRESS_USERNAME}:{WORDPRESS_APP_PASSWORD}"
 token = base64.b64encode(credentials.encode()).decode()
 headers = {
     'Authorization': f'Basic {token}',
-    'Content-Type': 'application/json'
+    'Content-Type': 'application/json',
+    'User-Agent': 'WordPress-GitHub-Sync/1.0'  # User-Agentを設定
 }
 
 API_BASE = f"{WORDPRESS_URL}/wp-json/wp/v2"
@@ -54,6 +56,18 @@ def get_post_by_slug(slug: str) -> Optional[Dict[str, Any]]:
     except Exception as e:
         print(f"⚠️  投稿検索エラー: {e}")
         return None
+
+
+def extract_title_from_html(html_content: str) -> Optional[str]:
+    """HTMLコンテンツから最初のh2見出しを抽出してタイトルとして使用"""
+    # h2タグを検索（wp-block-headingクラスを含む）
+    match = re.search(r'<h2[^>]*class="[^"]*wp-block-heading[^"]*"[^>]*>(.*?)</h2>', html_content, re.IGNORECASE | re.DOTALL)
+    if match:
+        title = match.group(1).strip()
+        # HTMLタグを除去
+        title = re.sub(r'<[^>]+>', '', title)
+        return title
+    return None
 
 
 def create_or_update_post(file_path: Path, slug: str, title: str, content: str) -> bool:
@@ -125,12 +139,17 @@ def main():
     
     for file_path in html_files:
         try:
-            # ファイル名からスラッグとタイトルを生成
+            # ファイル名からスラッグを生成
             slug = file_path.stem  # 拡張子を除いたファイル名
-            title = slug.replace('-', ' ').replace('_', ' ').title()
             
             # ファイル内容を読み込み
             content = file_path.read_text(encoding='utf-8')
+            
+            # HTMLからタイトルを抽出（最初のh2見出しを優先）
+            title = extract_title_from_html(content)
+            if not title:
+                # h2が見つからない場合はファイル名から生成
+                title = slug.replace('-', ' ').replace('_', ' ').title()
             
             # WordPressに同期
             success = create_or_update_post(file_path, slug, title, content)

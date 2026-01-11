@@ -14,14 +14,14 @@ from dotenv import load_dotenv
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from social_media.article_detector import check_wordpress_rss, add_to_approval_queue
-from social_media.tweet_generator_v2 import generate_buzz_tweet
+from social_media.tweet_generator_v3 import generate_tweet_by_type, select_content_type, get_persona_and_engagement
 from social_media.news_tweet_generator import generate_news_tweet_with_ai
 from social_media.line_notify import send_line_message
 from social_media.news_collector import collect_cbd_news, summarize_news_articles
 from social_media.news_summarizer import summarize_news
 from social_media.tweet_formatter import format_tweet
 from social_media.buzz_analyzer import analyze_buzz_tweets, compare_accounts
-from google_services.google_sheets import read_spreadsheet
+from google_services.google_sheets import read_spreadsheet, write_spreadsheet
 
 # .envファイルを読み込む
 load_dotenv()
@@ -93,35 +93,68 @@ def summarize_article_trends():
 
 def generate_daily_tweet():
     """
-    毎日のツイート文案を自動生成（バズる要素を考慮した改善版）
+    毎日のツイート文案を自動生成（新しい方向性に合わせた改善版）
     
     Returns:
-        ツイート文案
+        (tweet_text, content_type, persona, engagement) のタプル
     """
     try:
+        # コンテンツタイプを選択（投稿比率に基づく）
+        content_type = select_content_type()
+        
         # WordPress RSSフィードから新着記事を取得
         new_articles = check_wordpress_rss()
         
-        if not new_articles:
-            # 新着記事がない場合、一般的なツイート文案を生成
-            tweet_text = "CBDに関する最新情報をお届けします 🌿 #CBD"
-        else:
-            # 最新記事からツイート文案を生成（改善版）
-            latest_article = new_articles[0]
-            tweet_text = generate_buzz_tweet(
-                latest_article['title'],
-                latest_article.get('summary'),
-                latest_article.get('url'),
-                latest_article.get('summary')  # 元のテキストとして使用
-            )
+        # CBDニュースを取得
+        cbd_news = collect_cbd_news(days=30, max_articles=5)
         
-        return tweet_text
+        tweet_text = None
+        article_title = None
+        article_url = None
+        news_title = None
+        news_url = None
+        
+        if new_articles:
+            # 記事がある場合
+            latest_article = new_articles[0]
+            article_title = latest_article['title']
+            article_url = latest_article.get('url')
+            article_content = latest_article.get('summary', '')
+            
+            tweet_text = generate_tweet_by_type(
+                content_type=content_type,
+                article_title=article_title,
+                article_content=article_content,
+                article_url=article_url
+            )
+        elif cbd_news:
+            # ニュースがある場合
+            latest_news = cbd_news[0]
+            news_title = latest_news['title']
+            news_url = latest_news.get('url')
+            news_content = latest_news.get('summary', '')
+            
+            tweet_text = generate_tweet_by_type(
+                content_type=content_type,
+                news_title=news_title,
+                news_content=news_content,
+                news_url=news_url
+            )
+        else:
+            # コンテンツがない場合、フォールバック
+            tweet_text = "【CBD情報】幅広く正確なCBDや大麻情報をお届けします。"
+            content_type = 'other'
+        
+        # ペルソナと引き付け期待を取得
+        persona, engagement = get_persona_and_engagement(content_type)
+        
+        return (tweet_text, content_type, persona, engagement, article_title or news_title, article_url or news_url)
     
     except Exception as e:
         print(f"⚠️ ツイート文案生成に失敗: {e}")
         import traceback
         traceback.print_exc()
-        return "CBDに関する最新情報をお届けします 🌿 #CBD"
+        return ("【CBD情報】幅広く正確なCBDや大麻情報をお届けします。", 'other', '幅広い層', '最新情報の価値で興味を持ち、サイトで詳しい情報を確認したいと感じてもらう', None, None)
 
 
 def send_daily_tweet_preview():
@@ -131,8 +164,20 @@ def send_daily_tweet_preview():
     try:
         print(f"📝 本日のツイート案を生成しています... ({datetime.now().strftime('%Y-%m-%d %H:%M')})")
         
-        # ツイート文案を自動生成
-        tweet_text = generate_daily_tweet()
+        # ツイート文案を自動生成（新しい方向性に合わせて）
+        result_tuple = generate_daily_tweet()
+        if isinstance(result_tuple, tuple) and len(result_tuple) >= 4:
+            tweet_text, content_type, persona, engagement = result_tuple[:4]
+            article_title = result_tuple[4] if len(result_tuple) > 4 else None
+            article_url = result_tuple[5] if len(result_tuple) > 5 else None
+        else:
+            # フォールバック（旧形式）
+            tweet_text = result_tuple if isinstance(result_tuple, str) else "【CBD情報】幅広く正確なCBDや大麻情報をお届けします。"
+            content_type = 'other'
+            persona = '幅広い層'
+            engagement = '最新情報の価値で興味を持ち、サイトで詳しい情報を確認したいと感じてもらう'
+            article_title = f"本日のツイート案 ({datetime.now().strftime('%Y-%m-%d')})"
+            article_url = None
         
         # 記事動向を要約
         article_summary = summarize_article_trends()
@@ -147,6 +192,8 @@ def send_daily_tweet_preview():
 
 ---
 文字数: {len(tweet_text)}/280
+コンテンツタイプ: {content_type}
+ペルソナ: {persona}
 
 承認待ちリスト: https://docs.google.com/spreadsheets/d/{APPROVAL_SPREADSHEET_ID}
 """
@@ -154,13 +201,17 @@ def send_daily_tweet_preview():
         print("📱 LINEにプレビューを送信しています...")
         send_line_message(message)
         
-        # スプレッドシートに「下書き」として記録
+        # スプレッドシートに「下書き」として記録（新しい構造に対応）
         print("📊 スプレッドシートに下書きとして記録しています...")
-        result = add_to_approval_queue(
-            f"本日のツイート案 ({datetime.now().strftime('%Y-%m-%d')})",
+        from social_media.article_detector_v2 import add_to_approval_queue_v2
+        result = add_to_approval_queue_v2(
+            article_title or f"本日のツイート案 ({datetime.now().strftime('%Y-%m-%d')})",
             tweet_text,
-            None,
-            'scheduled'
+            article_url,
+            'scheduled',
+            content_type,
+            persona,
+            engagement
         )
         
         if result:

@@ -31,6 +31,12 @@ def format_tweet(tweet_text, style='elegant'):
     # ハッシュタグを削除
     formatted = remove_hashtags(formatted)
     
+    # 絵文字を削除（信頼感を高めるため）
+    formatted = remove_emojis(formatted)
+    
+    # 【】タイトルの改行を修正（閉じ括弧】が別行になっている場合を修正）
+    formatted = fix_title_line_breaks(formatted)
+    
     # 改行を整理
     formatted = add_intelligent_breaks(formatted)
     
@@ -60,6 +66,49 @@ def remove_hashtags(text):
     text = re.sub(r'\s*#\w+$', '', text)
     text = re.sub(r'\s*#\w+\s*', ' ', text)
     return text.strip()
+
+
+def remove_emojis(text):
+    """絵文字を削除（信頼感を高めるため）"""
+    # 絵文字のUnicode範囲を削除
+    text = re.sub(r'[\U0001F300-\U0001F9FF]', '', text)  # 一般的な絵文字
+    text = re.sub(r'[\U0001FA00-\U0001FAFF]', '', text)  # 拡張絵文字
+    text = re.sub(r'[\U00002600-\U000026FF]', '', text)  # 記号・絵文字
+    text = re.sub(r'[\U00002700-\U000027BF]', '', text)  # 装飾記号
+    text = re.sub(r'[\U0001F600-\U0001F64F]', '', text)  # 顔文字
+    text = re.sub(r'[\U0001F680-\U0001F6FF]', '', text)  # 交通・地図記号
+    text = re.sub(r'[\U0001F1E0-\U0001F1FF]', '', text)  # 国旗
+    text = re.sub(r'[\U0001F900-\U0001F9FF]', '', text)  # 補助絵文字
+    # 絵文字の結合文字（ゼロ幅結合子）を削除
+    text = re.sub(r'[\u200D\uFE0F]', '', text)  # ゼロ幅結合子、異体字セレクタ
+    # 余分な空白を整理
+    text = re.sub(r'\s+', ' ', text)
+    return text.strip()
+
+
+def fix_title_line_breaks(text):
+    """【】タイトルの改行を修正（閉じ括弧】が別行になっている場合を修正）"""
+    lines = text.split('\n')
+    formatted_lines = []
+    i = 0
+    while i < len(lines):
+        line = lines[i].strip()
+        if line.startswith('【') and not line.endswith('】'):
+            # 【で始まっているが】で終わっていない場合、次の行を確認
+            if i + 1 < len(lines) and lines[i + 1].strip() == '】':
+                # 次の行が】だけの場合、結合
+                formatted_lines.append(line + '】')
+                i += 2
+                continue
+            elif i + 1 < len(lines) and '】' in lines[i + 1]:
+                # 次の行に】が含まれている場合、結合
+                next_line = lines[i + 1].strip()
+                formatted_lines.append(line + ' ' + next_line)
+                i += 2
+                continue
+        formatted_lines.append(line)
+        i += 1
+    return '\n'.join(formatted_lines)
 
 
 def add_intelligent_breaks(text):
