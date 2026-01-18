@@ -1,0 +1,650 @@
+/* ===== 共通：余白の最適化 ===== */
+
+/* PCでは SP 専用改行を無効化 */
+.sp-br { display: none; }
+
+/* ===== スマホ調整 ===== */
+@media (max-width: 767px) {
+
+
+  /* カバー直後の余白の保険 */
+  .wp-block-cover.u-mb-20 + .wp-block-group,
+  .wp-block-cover.u-mb-30 + .wp-block-group { margin-top: 6px !important; }
+
+  /* ヒーロー（カバー）の見える高さを抑える＋内側パディング調整 */
+  .wp-block-cover.u-mb-20,
+  .wp-block-cover.u-mb-30 { min-height: 320px !important; }
+  .wp-block-cover .wp-block-cover__inner-container { padding: 24px 18px !important; }
+
+  /* SPだけ改行を有効化（.sp-br を表示） */
+  .sp-br { display: inline; }
+
+  /* カバー内の見出し相当テキストのサイズをSPだけ小さく */
+  .sp_only.has-x-large-font-size {
+    font-size: 20px !important;
+    line-height: 1.5 !important;
+  }
+
+  /* 課題別カラムの行間を詰める＋各カラム内の下マージンを最小化 */
+  .plain-section .wp-block-columns { row-gap: 20px !important; }
+  .plain-section .wp-block-column > :where(*):not(:last-child) { margin-bottom: 8px !important; }
+
+  /* SWELL のバナー内テキストボックスの余白をやや小さく */
+  .plain-section .c-bannerLink__text { padding: 10px 14px !important; }
+}
+/* no-gap-after が付いたカバーの直後だけ余白を潰す（他のページには影響なし） */
+.no-gap-after { margin-bottom: 0 !important; }
+.no-gap-after + * {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+  --wp--style--block-gap: 0 !important;
+}
+/* ヒーロー（カバー）内の .sp_only はPCでも表示させる */
+.wp-block-cover .sp_only { display: block; }
+@media (max-width: 767px){
+  .wp-block-cover .sp_only { 
+    font-size: 20px !important; 
+    line-height: 1.5 !important; 
+  }
+}
+/* ヒーロー内テキストを確実に最前面・不透明に */
+.wp-block-cover .wp-block-cover__inner-container{
+  position: relative !important;
+  z-index: 3 !important;
+  opacity: 1 !important;
+}
+.wp-block-cover .wp-block-cover__background{ z-index: 1 !important; }
+.wp-block-cover img.wp-block-cover__image-background{ z-index: 0 !important; }
+
+/* ヒーロー見出しのサイズ（PC/SP別） */
+.hero-lead{ margin:0; }
+@media (min-width:768px){
+  .hero-lead{ font-size:40px !important; line-height:1.2 !important; }
+}
+@media (max-width:767px){
+  .hero-lead{ font-size:20px !important; line-height:1.5 !important; }
+}
+
+/* ヒーロー直後の余白調整 → 見出しやGroupだけに限定 */
+.wp-block-cover + .wp-block-group,
+.wp-block-cover + .wp-block-columns,
+.wp-block-cover + .wp-block-heading {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+/* 画像ブロックは潰さない */
+.wp-block-cover + .wp-block-image {
+  margin-top: 12px !important; /* 少し余白を残す */
+}
+
+
+/* 課題別：不要な段落を非表示（高さ差の原因） */
+.plain-section .item-name{ display:none !important; }
+
+/* 課題別：Columnsのギャップを明示（横も縦も詰める） */
+.plain-section .wp-block-columns{
+  column-gap: 16px !important;
+  row-gap: 12px !important;           /* SPで縦に並ぶ時も詰める */
+  --wp--style--block-gap: 12px !important;
+}
+
+/* SWELLバナーの下余白を統一して詰める */
+.plain-section .swell-block-bannerLink{ margin-bottom: 8px !important; }
+
+/* バナー内テキストの過剰パディング抑制（必要なら） */
+.plain-section .c-bannerLink__text{ padding:10px 14px !important; }
+
+/* トップページのメインビジュアル専用ボタン */
+.hero-btn .wp-block-button__link.wp-element-button {
+  background: transparent !important;   /* 背景透明 */
+  color: #fff !important;               /* 文字白 */
+  border: 2px solid #fff !important;    /* 白い線 */
+  border-radius: 12px;                  /* 少し角丸 */
+  padding: 0.8em 1.6em;
+  font-weight: bold;
+  text-align: center;
+  display: inline-block;
+  white-space: nowrap;                  /* 改行しない */
+  transition: all 0.3s ease-in-out;
+}
+
+/* ホバー時 */
+.hero-btn .wp-block-button__link.wp-element-button:hover {
+  background: rgba(255,255,255,0.1);    /* うっすら白背景 */
+  transform: translateY(-2px);
+}
+/* ヒーローボタン調整 */
+.hero-btn .wp-block-button__link.wp-element-button {
+  background: transparent !important;    /* 背景透明 */
+  color: #fff !important;                /* 文字白 */
+  border: 2px solid #fff !important;     /* 白い線 */
+  border-radius: 12px;                   /* 少し角丸 */
+  padding: 10px 28px;                    /* 上下・左右余白 */
+  font-weight: 600;
+  font-size: 16px;
+  text-align: center;
+  display: inline-flex;                  /* Flexbox化 */
+  align-items: center;                   /* 上下中央揃え */
+  justify-content: center;               /* 左右中央揃え */
+  transition: all 0.3s ease-in-out;
+  white-space: nowrap;                   /* 改行防止 */
+  box-sizing: border-box;
+  line-height: 1;                        /* 行高さを固定 */
+  height:400px;                          /* ボタンの高さを統一 */
+}
+
+/* ホバー時 */
+.hero-btn .wp-block-button__link.wp-element-button:hover {
+  background: rgba(255,255,255,0.1);     /* ホバーでうっすら白背景 */
+  transform: translateY(-2px);
+}
+/* サブテキスト内の"ヒーローボタン"全体の癖をリセット */
+.hero-btn{
+  display: inline-block;   /* 親pの行ボックス影響を切る */
+  line-height: 0;          /* 親pのline-heightを無効化 */
+}
+
+/* ボタン本体：完全中央配置・白枠・角丸 */
+.hero-btn .wp-block-button__link.wp-element-button{
+  display: inline-flex !important;      /* フレックス化 */
+  align-items: center !important;       /* 上下中央 */
+  justify-content: center !important;   /* 左右中央 */
+
+  height: 46px !important;              /* 高さを固定（お好みで） */
+  padding: 0 28px !important;           /* 左右だけパディング */
+  line-height: 1 !important;            /* 行高の影響を排除 */
+  white-space: nowrap !important;       /* 改行しない */
+
+  background: transparent !important;   /* 背景透明 */
+  color: #fff !important;               /* 文字白 */
+  border: 2px solid #fff !important;    /* 白枠 */
+  border-radius: 12px !important;       /* 角丸 */
+
+  font-weight: 600;
+  font-size: 16px;
+  text-align: center;
+  box-sizing: border-box;
+  transition: all .3s ease-in-out;
+  vertical-align: middle;               /* 念のため */
+}
+
+/* SWELLやプラグインで疑似要素が付く場合のズレ対策 */
+.hero-btn .wp-block-button__link.wp-element-button::before,
+.hero-btn .wp-block-button__link.wp-element-button::after{
+  content: none !important;
+}
+
+/* ホバー時の軽い演出 */
+.hero-btn .wp-block-button__link.wp-element-button:hover{
+  background: rgba(255,255,255,.1);
+  transform: translateY(-2px);
+}
+.hero-btn .wp-block-button__link.wp-element-button{
+
+}
+/* サブテキスト内のpをリセット */
+.sub-text p {
+  margin: 0 !important;
+  line-height: 0 !important; /* 余計な高さを消す */
+}
+
+/* hero-btnは中央揃えをflexで */
+.hero-btn{
+  display: flex !important;
+  justify-content: center !important;
+  line-height: 0 !important;
+}
+
+.hero-btn .wp-block-button__link.wp-element-button{
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  height: 46px !important;
+  padding: 0 28px !important;
+  line-height: 1 !important;
+
+  background: transparent !important;
+  color: #fff !important;
+  border: 2px solid #fff !important;
+  border-radius: 12px !important;
+
+  font-weight: 600;
+  font-size: 16px;
+}
+
+/* Contact Form 7 */
+
+/* テキストを太字 */
+.wpcf7-form label {
+font-weight: bold;
+}
+/* フォームの下に余白 */
+.wpcf7-form p {
+margin-bottom: 30px;
+}
+/* フォームのカスタマイズ */
+.wpcf7-text, .wpcf7-email, .wpcf7-tel, .wpcf7-textarea {
+width: 100%;
+background-color: #fff;
+margin-top: 5px;
+}
+/* ラジオボタンの左の余白 */
+.wpcf7-radio span {
+margin-left: 0;
+}
+/* ボタンのカスタマイズ */
+.wpcf7-submit, .wpcf7-previous {
+display: inline-block;
+width: 240px;
+padding: 1.2em 1em;
+border-radius: 50px;
+background: #D53633;/* ここにメインカラー */
+font-size: 16px;
+font-weight: 700;
+letter-spacing: 0.2em;
+line-height: 1;
+color: #fff!important;
+}
+/* 必須マーク */
+.required {
+color: #fff;
+background: #D53633;/* ここにメインカラー */
+font-size: 0.8em;
+padding: 0.3em;
+border-radius: 0.5em;
+}
+.grecaptcha-badge {
+ visibility: hidden;
+}
+/* WPブロック表をSPで横スクロール可能に */
+figure.wp-block-table {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* つぶれ防止に最小幅を確保（必要に応じて数値調整） */
+figure.wp-block-table table {
+  min-width: 720px;
+  border-collapse: collapse;
+}
+
+/* 見た目（任意） */
+figure.wp-block-table::-webkit-scrollbar { height: 6px; }
+figure.wp-block-table::-webkit-scrollbar-thumb { background: rgba(0,0,0,.2); border-radius: 3px; }
+/* スマホ表示 (〜767px幅) */
+@media screen and (max-width: 767px) {
+  /* Coverブロック全体 */
+  .wp-block-cover {
+    min-height: 200px !important;  /* 高さを小さくする */
+  }
+
+  /* カバー内の文字 */
+  .wp-block-cover .wp-block-cover__inner-container {
+    padding: 10px !important; /* 余白を縮小 */
+  }
+
+  .wp-block-cover h1,
+  .wp-block-cover h2,
+  .wp-block-cover p {
+    font-size: 16px !important;  /* 文字サイズ縮小 */
+    line-height: 1.4;
+  }
+
+  /* ボタン (もし使っていれば) */
+  .wp-block-cover .wp-block-button__link {
+    font-size: 14px !important;
+    padding: 6px 12px;
+  }
+}
+/* 固定ページのタイトルを非表示（SWELL想定） */
+.page .p-entry__title,
+.single .p-entry__title,
+.entry-title { display: none; }
+
+/* ヒーローを端から端までフル幅＆余白ゼロ */
+.wp-block-cover.alignfull { margin-top: 0 !important; margin-bottom: 0 !important; }
+
+/* 画像が画面いっぱいに綺麗に伸びるように */
+.wp-block-cover__image-background { object-fit: cover; width: 100%; height: 100%; }
+
+/* SWELL 固定ページタイトルを非表示 */
+.page .c-pageTitle,
+.page .c-pageTitle__inner,
+.page .c-entry__title {
+    display: none !important;
+}
+.post_content > *:first-child { margin-top:0 !important; }
+.p-breadcrumb { margin-bottom:0 !important; }
+/* ▼「あなたの課題から選ぶ」セクションの余白を最小化 */
+.wp-block-heading.has-huge-font-size.u-mb-ctrl.u-mb-5 {
+  margin-bottom: 8px !important; /* 見出し下余白をぐっと詰める */
+}
+
+/* 列ブロック全体の縦横ギャップを最小に（PC/スマホ共通） */
+.wp-block-columns.sp_mb4_.u-mb-ctrl.u-mb-40 {
+  --wp--style--block-gap: 8px !important;  /* WPの内部ギャップ変数 */
+  gap: 8px !important;                      /* ブラウザ用フォールバック */
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;              /* ここが特に効く */
+}
+
+/* 各カラムの内側余白・下余白をゼロに */
+.wp-block-columns.sp_mb4_.u-mb-ctrl.u-mb-40 .wp-block-column {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* bannner-link 本体の余白をリセット（プラグイン由来の下マージンを潰す） */
+.swell-block-bannerLink,
+.swell-block-bannerLink .c-bannerLink {
+  margin: 0 !important;
+}
+
+/* figure のデフォルト余白をゼロに、画像の行間隙間も消す */
+.swell-block-bannerLink .c-bannerLink__figure,
+.swell-block-bannerLink figure {
+  margin: 0 !important;
+  line-height: 0 !important;
+}
+
+/* 画像のベースライン隙間対策：block化＋共通比率（高さ揃えたい時は aspect-ratio も） */
+.swell-block-bannerLink .c-bannerLink__img {
+  display: block !important;
+  width: 100% !important;
+  height: auto !important;
+  object-fit: cover;
+  /* 高さをより揃えたい場合は下をONに（横長にトリミング）
+     aspect-ratio: 16 / 9; 
+  */
+}
+
+/* オーバーレイ内テキストの余白も最小に */
+.c-bannerLink__text {
+  margin: 0 !important;
+  padding: 10px 12px !important;
+}
+
+/* スマホ時は縦の隙間をさらに詰める */
+@media (max-width: 781px) {
+  .wp-block-columns.sp_mb4_.u-mb-ctrl.u-mb-40 {
+    --wp--style--block-gap: 6px !important;
+    gap: 6px !important;
+  }
+}
+/* ====================================
+   CBDの人専用デザイン（SWELL用）
+   ==================================== */
+
+/* ===== 基本タイポグラフィ ===== */
+.article-body {
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  color: #333;
+  line-height: 2.0;
+  letter-spacing: 0.05em;
+}
+
+.lead-txt {
+  font-size: 20px;
+  font-weight: bold;
+  line-height: 1.6;
+  margin-bottom: 32px;
+  color: #333;
+}
+
+.para {
+  margin-bottom: 2.5em;
+  font-size: 16px;
+}
+
+/* マーカー・強調 */
+.mark-yl {
+  background: linear-gradient(transparent 60%, #fff799 60%);
+  font-weight: bold;
+  padding: 0 4px;
+}
+
+.mark-gr {
+  background: linear-gradient(transparent 60%, #d8f5e4 60%);
+  font-weight: bold;
+  padding: 0 4px;
+}
+
+.txt-bold {
+  font-weight: bold;
+  font-size: 1.1em;
+}
+
+/* 体験シミュレーションボックス */
+.sim-box {
+  background: #f9fbfd;
+  border: 2px solid #e1e8ed;
+  border-radius: 12px;
+  padding: 24px;
+  margin: 40px 0;
+  position: relative;
+}
+
+.sim-title {
+  font-weight: bold;
+  font-size: 18px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  color: #0056b3;
+}
+
+.sim-title::before {
+  content: '👁️';
+  margin-right: 8px;
+  font-size: 22px;
+}
+
+/* ===== 商品カード（完全再現スタイル） ===== */
+.pr-card {
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+  padding: 0;
+  margin-bottom: 40px;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+  overflow: hidden;
+}
+
+/* 見出し */
+.pr-head {
+  padding: 16px 20px;
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+  border-bottom: 1px solid #f0f0f0;
+  display: flex;
+  align-items: center;
+}
+
+.pr-head::before {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 24px;
+  background: #006064;
+  margin-right: 12px;
+  border-radius: 2px;
+}
+
+/* カード内部レイアウト */
+.pr-body {
+  padding: 24px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px;
+}
+
+/* 左：画像エリア */
+.pr-img-area {
+  flex: 1;
+  min-width: 260px;
+  text-align: center;
+}
+
+.pr-img-area img {
+  width: 100%;
+  max-width: 240px;
+  height: auto;
+  object-fit: contain;
+}
+
+.pr-cite {
+  display: block;
+  margin-top: 8px;
+  font-size: 11px;
+  color: #999;
+}
+
+.pr-cite a {
+  color: #999;
+  text-decoration: underline;
+}
+
+/* 右：情報エリア */
+.pr-info-area {
+  flex: 1;
+  min-width: 260px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* 価格ボックス */
+.price-box {
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  overflow: hidden;
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.price-header {
+  background: #f2f2f2;
+  color: #333;
+  font-weight: bold;
+  font-size: 13px;
+  padding: 8px 0;
+  border-bottom: 1px solid #ddd;
+}
+
+.price-content {
+  background: #fff;
+  padding: 16px 0;
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+  letter-spacing: 0.05em;
+}
+
+.price-content span {
+  font-size: 14px;
+  font-weight: normal;
+  margin-left: 2px;
+}
+
+/* ボタン共通 */
+.pr-btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  padding: 14px 0;
+  border-radius: 50px;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 16px;
+  color: #fff !important;
+  margin-bottom: 12px;
+  transition: transform 0.2s, opacity 0.2s;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.pr-btn:hover {
+  transform: translateY(-2px);
+  opacity: 0.9;
+}
+
+.btn-pink {
+  background: linear-gradient(to bottom, #ff9e9e, #ff7e7e);
+  border-bottom: 2px solid #e57373;
+}
+
+.btn-green {
+  background: linear-gradient(to bottom, #9ce69c, #7cc67c);
+  border-bottom: 2px solid #66bb6a;
+}
+
+/* アコーディオン（詳細） */
+.pr-details {
+  border-top: 1px solid #f0f0f0;
+}
+
+.pr-summary {
+  display: block;
+  padding: 16px 24px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+  color: #555;
+  position: relative;
+  list-style: none;
+}
+
+.pr-summary::-webkit-details-marker {
+  display: none;
+}
+
+.pr-summary::after {
+  content: '+';
+  position: absolute;
+  right: 24px;
+  font-size: 18px;
+  font-weight: bold;
+  color: #aaa;
+}
+
+details[open] .pr-summary::after {
+  content: '-';
+}
+
+.pr-content-inner {
+  padding: 0 24px 24px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #666;
+}
+
+.spec-row {
+  display: flex;
+  border-bottom: 1px solid #eee;
+  padding: 8px 0;
+}
+
+.spec-lbl {
+  width: 30%;
+  font-weight: bold;
+  color: #444;
+}
+
+.spec-val {
+  width: 70%;
+}
+
+/* スマホ調整 */
+@media(max-width: 768px) {
+  .pr-body {
+    flex-direction: column;
+    gap: 20px;
+  }
+  .pr-img-area img {
+    max-width: 200px;
+  }
+}
